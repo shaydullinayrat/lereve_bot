@@ -1,0 +1,9 @@
+asgiref==3.8.1
+Django==4.2.16
+sqlparse==0.5.2
+typing_extensions==4.12.2
+django-grappelli==3.0.6
+environs==9.5.0
+gunicorn==20.1.0
+pyTelegramBotApi==4.10.0
+aiohttp==3.11.2
