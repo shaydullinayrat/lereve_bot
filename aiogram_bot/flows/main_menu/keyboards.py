@@ -4,7 +4,7 @@ from aiogram_bot.keyboards import generate_keyboard
 def start_keyboard():
     buttons_data = [
         ("Получить бонус", "bonus"),
-        ("Наш ассортимент", "assortment"),
+        ("Наши магазины", "shops"),
         ("Служба заботы", "care_service"),
         ("Как пользоваться", "instructions"),
     ]

@@ -1,6 +1,6 @@
 from aiogram_bot import main
 # from aiogram_bot.services.send_message import send_callback_aiogram_message
-from aiogram_bot.flows.main_menu.keyboards import start_keyboard
+from aiogram_bot.flows.main_menu.keyboards import start_keyboard, back_to_main_menu_keyboard
 from aiogram_bot.utils import send_callback_aiogram_message
 from core.settings import TELEGRAM_MANAGER_ID, TELEGRAM_MANAGER_USERNAME
 
@@ -21,5 +21,5 @@ async def show_care_service(callback, state):
     await send_callback_aiogram_message(
         callback=callback,
         text=text,
-        keyboard=start_keyboard()
+        keyboard=back_to_main_menu_keyboard()
     )

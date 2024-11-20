@@ -1,6 +1,7 @@
 from aiogram.types import FSInputFile
 from asgiref.sync import sync_to_async
 from aiogram_bot.flows.instructions.keyboards import instructions_keyboard
+from aiogram_bot.flows.instructions.texts import no_active_instructions_text
 from aiogram_bot.flows.main_menu.keyboards import start_keyboard
 from aiogram_bot.utils import send_callback_aiogram_message
 from apps.instructions.models import Instruction
@@ -16,8 +17,6 @@ def get_all_instruction_data(instruction_id):
         if instruction.photo:
             photo_path = instruction.photo.path  # Получаем путь к файлу
             photo = FSInputFile(photo_path)
-        print('photo  dd ', photo)
-        print('photo  dd ', photo)
         instruction_data = [(text, photo, None)]
 
         for sub_instr in subinstructions:
@@ -39,7 +38,6 @@ async def show_instruction(callback, instruction_id):
     await callback.message.edit_reply_markup()
     instruction_data = await get_all_instruction_data(instruction_id)
     for text, photo, keyboard in instruction_data:
-        print('photo ', photo)
 
         if photo is None:
             await callback.message.answer(
@@ -65,7 +63,7 @@ async def show_instruction_list(callback, state):
     instructions = await sync_to_async(lambda: list(Instruction.objects.filter(is_active=True)))()
     if len(instructions) == 0:
         await send_callback_aiogram_message(
-            callback, 'К сожалению никаких инструкций пока нет. Выберите другие опции:', start_keyboard()
+            callback, no_active_instructions_text, start_keyboard()
         )
     elif len(instructions) == 1:
         instruction = instructions[0]
