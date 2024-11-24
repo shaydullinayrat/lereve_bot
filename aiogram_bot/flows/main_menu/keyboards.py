@@ -1,3 +1,5 @@
+from aiogram.types import ReplyKeyboardMarkup, KeyboardButton
+
 from aiogram_bot.keyboards import generate_keyboard
 
 
@@ -18,3 +20,13 @@ def back_to_main_menu_keyboard():
     ]
     layout = [1]
     return generate_keyboard(buttons_data, layout)
+
+
+def main_menu_keyboard():
+    keyboard = ReplyKeyboardMarkup(
+        keyboard=[
+            [KeyboardButton(text="Главное меню")],
+        ],
+        resize_keyboard=True
+    )
+    return keyboard

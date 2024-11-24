@@ -3,33 +3,36 @@ from asgiref.sync import sync_to_async
 from aiogram.types import InlineKeyboardButton, InlineKeyboardMarkup
 from aiogram_bot.flows.main_menu.keyboards import back_to_main_menu_keyboard, start_keyboard
 from aiogram_bot.flows.main_menu.texts import back_to_main_menu_text
+from aiogram_bot.flows.shops.keyboards import generate_shop_button
 from aiogram_bot.flows.shops.texts import no_active_shops_text
-from aiogram_bot.utils import send_callback_aiogram_message
+from aiogram_bot.keyboards import generate_linear_keyboard
+from aiogram_bot.utils import send_callback_aiogram_message, send_message_aiogram_message
 from apps.shops.models import Shop
 
-def generate_shop_button(shop):
-    shop_url = shop.url
-    shop_title = shop.title
-    text = f'Перейти в магазин {shop_title}'
-    row = [InlineKeyboardButton(text=text, url=shop_url)]
-    keyboard = InlineKeyboardMarkup(inline_keyboard=[row])
-    return keyboard
+
+
+
 
 @sync_to_async
 def get_all_shop_data():
     try:
-        shops = Shop.objects.all()
+        shops = Shop.objects.filter(is_active=True)
+        shops_count = shops.count()
         shop_data = []
-
+        is_last = False
+        k = 0
         for shop in shops:
+            k += 1
             shop_photo = None
             if shop.photo:
                 photo_path = shop.photo.path  # Получаем путь к файлу
                 shop_photo = FSInputFile(photo_path)
 
             text, photo = f"<b>{shop.title}</b>\n{shop.description}", shop_photo
+            if k == shops_count:
+                is_last = True
 
-            keyboard = generate_shop_button(shop)
+            keyboard = generate_shop_button(shop, is_last)
 
             temp = tuple((text, photo, keyboard))
             shop_data.append(temp)
@@ -43,8 +46,6 @@ async def show_shop_list(callback, state):
     await state.clear()
     await callback.message.edit_reply_markup()
 
-
-
     shops = await sync_to_async(lambda: list(Shop.objects.filter(is_active=True)))()
     if len(shops) == 0:
         await send_callback_aiogram_message(
@@ -52,7 +53,6 @@ async def show_shop_list(callback, state):
         )
 
     else:
-
 
         shop_data = await get_all_shop_data()
 
@@ -69,7 +69,8 @@ async def show_shop_list(callback, state):
                     caption=text,
                     reply_markup=keyboard
                 )
-        await callback.message.answer(
-            text=back_to_main_menu_text,
-            reply_markup=back_to_main_menu_keyboard()
-        )
+        # await callback.message.answer(
+        #     text=back_to_main_menu_text,
+        #     reply_markup=back_to_main_menu_keyboard()
+        # )
+

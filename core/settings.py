@@ -26,13 +26,10 @@ env.read_env()
 # SECURITY WARNING: keep the secret key used in production secret!
 SECRET_KEY = env.str('SECRET_KEY')
 
-
-
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = env.bool('DEBUG')
 
 ALLOWED_HOSTS = ['*']
-
 
 # Application definition
 
@@ -49,6 +46,9 @@ INSTALLED_APPS = [
     'apps.instructions',
     'apps.shops',
     'apps.bonuses',
+    'django_celery_beat',
+    'django_celery_results',
+    'aiogram_bot',
 ]
 
 MIDDLEWARE = [
@@ -82,18 +82,28 @@ TEMPLATES = [
 
 WSGI_APPLICATION = 'core.wsgi.application'
 
-
 # Database
 # https://docs.djangoproject.com/en/4.2/ref/settings/#databases
-DB_NAME=env.str('DB_NAME')
+DB_NAME = env.str('DB_NAME')
+DB_USER = env.str('DB_USER')
+
+# DATABASES = {
+#     'default': {
+#         'ENGINE': 'django.db.backends.sqlite3',
+#         'NAME': BASE_DIR / f'{DB_NAME}db.sqlite3',
+#     }
+# }
 
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': BASE_DIR / f'{DB_NAME}db.sqlite3',
+        'ENGINE': 'django.db.backends.postgresql',
+        'NAME': f'{DB_NAME}',
+        'USER': f'{DB_USER}',
+        'PASSWORD': '',
+        'HOST': 'localhost',
+        'PORT': '',
     }
 }
-
 
 # Password validation
 # https://docs.djangoproject.com/en/4.2/ref/settings/#auth-password-validators
@@ -113,7 +123,6 @@ AUTH_PASSWORD_VALIDATORS = [
     },
 ]
 
-
 # Internationalization
 # https://docs.djangoproject.com/en/4.2/topics/i18n/
 
@@ -125,7 +134,6 @@ USE_I18N = True
 
 USE_TZ = True
 
-
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/4.2/howto/static-files/
 
@@ -134,8 +142,32 @@ STATIC_URL = 'static/'
 # Default primary key field type
 # https://docs.djangoproject.com/en/4.2/ref/settings/#default-auto-field
 
-ASGI_APPLICATION = "project_name.asgi.application"
+ASGI_APPLICATION = "core.asgi.application"
 
+# CACHES = {
+#     "default": {
+#         "BACKEND": "django.core.cache.backends.redis.RedisCache",
+#         "LOCATION": "redis://localhost:6379/1",
+#
+#     }
+# }
+
+# Redis как бэкенд и брокер для Celery
+CELERY_BROKER_URL = 'redis://localhost:6379/0'
+CELERY_RESULT_BACKEND = 'redis://localhost:6379/0'
+
+CELERY_TIMEZONE = 'UTC'
+CELERY_ACCEPT_CONTENT = ['json']
+CELERY_TASK_SERIALIZER = 'json'
+
+# INSTALLED_APPS += [
+#     'django_celery_results',
+#     'django_celery_beat',
+# ]
+
+CELERY_IMPORTS = (
+    'aiogram_bot.tasks',
+)
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 TOKEN_BOT = env.str('TOKEN_BOT')

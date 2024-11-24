@@ -1,6 +1,6 @@
 from asgiref.sync import sync_to_async
 
-from aiogram_bot.keyboards import generate_linear_keyboard
+from aiogram_bot.keyboards import generate_linear_keyboard, generate_keyboard
 from apps.instructions.models import Instruction
 
 @sync_to_async
@@ -19,3 +19,16 @@ def instructions_keyboard():
         ('Главное меню', 'start')
     )
     return generate_linear_keyboard(buttons_data)
+
+async def subinstruction_keyboard(next_subinstruction_id):
+    if next_subinstruction_id:
+        buttons_data = [
+            ("Назад", "instructions"),
+            ("Дальше", f"subinstruction_{next_subinstruction_id}"),
+
+        ]
+        layout = [2]
+        return generate_keyboard(buttons_data, layout)
+    else:
+        return await instructions_keyboard()
+

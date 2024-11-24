@@ -1,4 +1,4 @@
-from aiogram.types import InlineKeyboardButton, InlineKeyboardMarkup
+from aiogram.types import InlineKeyboardButton, InlineKeyboardMarkup, ReplyKeyboardMarkup, KeyboardButton
 
 
 def generate_linear_keyboard(buttons_data):
@@ -28,3 +28,4 @@ def generate_keyboard(buttons_data, layout):
         index += row_size
 
     return InlineKeyboardMarkup(inline_keyboard=buttons)
+

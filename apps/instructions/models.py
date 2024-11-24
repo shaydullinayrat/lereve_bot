@@ -18,11 +18,13 @@ class Instruction(models.Model):
 
     # Фото, связанное с инструкцией
     photo = models.ImageField(upload_to='media/instructions/', blank=True, null=True)
+    order = models.IntegerField(default=0)
 
     def __str__(self):
         return self.title
 
     class Meta:
+        ordering = ['order']
         verbose_name = "Инструкция"
         verbose_name_plural = "Инструкции"
 

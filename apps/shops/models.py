@@ -20,6 +20,7 @@ class Shop(models.Model):
 
 
 class Product(models.Model):
+    article = models.PositiveIntegerField(unique=True, default=0, verbose_name="Артикул")
     url = models.URLField(max_length=200, unique=True, verbose_name="URL продукта")
     shop = models.ForeignKey(Shop, on_delete=models.CASCADE, related_name="products", verbose_name="Магазин")
     photo = models.ImageField(upload_to='media/products/', null=True, blank=True, verbose_name="Фото продукта")
@@ -33,3 +34,4 @@ class Product(models.Model):
     class Meta:
         verbose_name = "Продукт"
         verbose_name_plural = "Продукты"
+
