@@ -20,10 +20,10 @@ def instructions_keyboard():
     )
     return generate_linear_keyboard(buttons_data)
 
-async def subinstruction_keyboard(next_subinstruction_id):
+async def subinstruction_keyboard(next_subinstruction_id, back_button='instructions'):
     if next_subinstruction_id:
         buttons_data = [
-            ("Назад", "instructions"),
+            ("Назад", back_button),
             ("Дальше", f"subinstruction_{next_subinstruction_id}"),
 
         ]

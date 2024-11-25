@@ -4,7 +4,9 @@ import logging
 # Инициализация бота
 from aiogram.client.default import DefaultBotProperties
 from aiogram.enums import ParseMode
+from aiogram.fsm.storage.memory import MemoryStorage
 
+from aiogram_bot.bot import bot
 from aiogram_bot.flows.bonuses.handlers import bonus_router
 from aiogram_bot.flows.care_service.handlers import care_service_router
 from aiogram_bot.flows.instructions.handlers import instruction_router
@@ -14,10 +16,10 @@ from aiogram_bot.handlers import main_router
 from aiogram_bot.utils import set_default_commands
 from core.settings import TOKEN_BOT
 
-bot = Bot(token=TOKEN_BOT,
-          default=DefaultBotProperties(parse_mode=ParseMode.HTML))
 
-dp = Dispatcher()
+storage = MemoryStorage()
+dp = Dispatcher(storage=storage)
+# dp = Dispatcher()
 
 
 

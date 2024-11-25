@@ -5,7 +5,7 @@ from aiogram.filters import Command
 
 from aiogram_bot.flows.main_menu import texts
 from aiogram_bot.flows.main_menu.keyboards import start_keyboard, main_menu_keyboard
-from aiogram_bot.flows.main_menu.utils import save_user_data
+from aiogram_bot.flows.main_menu.utils import save_user_data, get_welcome_text
 from aiogram_bot.utils import send_message_aiogram_message, send_callback_aiogram_message
 
 main_menu_router = Router()
@@ -21,7 +21,7 @@ async def start_cmd(message: Message, state: FSMContext):
     # await message.answer(text='Hello', reply_markup=main_menu_keyboard())
 
     await send_message_aiogram_message(
-        message, texts.welcome_text, start_keyboard()
+        message, get_welcome_text(message), start_keyboard()
     )
 
 
@@ -32,5 +32,5 @@ async def start_callback(callback: CallbackQuery, state: FSMContext):
     await state.clear()
 
     await send_callback_aiogram_message(
-        callback, texts.welcome_text, start_keyboard()
+        callback, get_welcome_text(callback.message), start_keyboard()
     )

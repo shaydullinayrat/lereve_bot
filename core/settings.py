@@ -9,7 +9,7 @@ https://docs.djangoproject.com/en/4.2/topics/settings/
 For the full list of settings and their values, see
 https://docs.djangoproject.com/en/4.2/ref/settings/
 """
-
+import os
 from pathlib import Path
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
@@ -49,6 +49,7 @@ INSTALLED_APPS = [
     'django_celery_beat',
     'django_celery_results',
     'aiogram_bot',
+    'django.contrib.postgres',
 ]
 
 MIDDLEWARE = [
@@ -97,11 +98,18 @@ DB_USER = env.str('DB_USER')
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql',
-        'NAME': f'{DB_NAME}',
-        'USER': f'{DB_USER}',
-        'PASSWORD': '',
-        'HOST': 'localhost',
-        'PORT': '',
+        # 'ENGINE': 'django_postgres_async.backend',
+        'HOST': os.environ.get('DB_HOST'),
+        'NAME': os.environ.get('DB_NAME'),
+        'USER': os.environ.get('DB_USER'),
+        # 'NAME': os.environ.get('DB_HOST'),
+        # 'NAME': f'{DB_NAME}',
+        # 'USER': f'{DB_USER}',
+        'PASSWORD': os.environ.get('DB_PASS'),
+        'PORT': '5432',
+        # 'OPTIONS': {
+        #     'unix_socket': '/var/run/postgresql'  # Убедитесь, что путь совпадает
+        # },
     }
 }
 
@@ -144,17 +152,17 @@ STATIC_URL = 'static/'
 
 ASGI_APPLICATION = "core.asgi.application"
 
-# CACHES = {
-#     "default": {
-#         "BACKEND": "django.core.cache.backends.redis.RedisCache",
-#         "LOCATION": "redis://localhost:6379/1",
-#
-#     }
-# }
 
 # Redis как бэкенд и брокер для Celery
+# CELERY_BROKER_URL = 'redis://redis:6379/0'
+# CELERY_RESULT_BACKEND = 'redis://redis:6379/0'
+
 CELERY_BROKER_URL = 'redis://localhost:6379/0'
 CELERY_RESULT_BACKEND = 'redis://localhost:6379/0'
+REDIS_HOST = 'localhost'
+REDIS_PORT = 6379
+
+
 
 CELERY_TIMEZONE = 'UTC'
 CELERY_ACCEPT_CONTENT = ['json']
@@ -172,4 +180,10 @@ CELERY_IMPORTS = (
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 TOKEN_BOT = env.str('TOKEN_BOT')
 TELEGRAM_MANAGER_ID = env.str('TELEGRAM_MANAGER_ID')
+TELEGRAM_CARE_SERVICE_ID = env.str('TELEGRAM_CARE_SERVICE_ID')
+TELEGRAM_CARE_SERVICE_USERNAME = env.str('TELEGRAM_CARE_SERVICE_USERNAME')
 TELEGRAM_MANAGER_USERNAME = env.str('TELEGRAM_MANAGER_USERNAME')
+
+
+WB_FEEDBACK_API_URL = "https://feedbacks-api.wildberries.ru/api/v1/feedbacks"
+WB_API_TOKEN = 'eyJhbGciOiJFUzI1NiIsImtpZCI6IjIwMjQxMTE4djEiLCJ0eXAiOiJKV1QifQ.eyJlbnQiOjEsImV4cCI6MTc0Nzk4NDE3MiwiaWQiOiIwMTkzNTAyMS0zMDFiLTdmMTktOTIxZC04OTM1YTBkMjVlNmMiLCJpaWQiOjIzMDc5MDM0LCJvaWQiOjg1MTY4LCJzIjo3OTM0LCJzaWQiOiI5NzdjODVkZC04ZGZjLTU4MGQtODU5Mi0yMGM3ZmQ5ZGRlZWYiLCJ0IjpmYWxzZSwidWlkIjoyMzA3OTAzNH0.GuYZF4tq--_6TLXYR7S-gdueHWcvz3hWY6-s9fNctFgazbZsJykZWVpsiWrYfE3146jDODSjkDYLwC1UYSbjOg'

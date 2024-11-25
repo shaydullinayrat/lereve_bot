@@ -7,7 +7,7 @@ from apps.shops.models import Product, Shop
 class ProductInline(admin.TabularInline):
     model = Product  # Связь с моделью SubInstruction
     extra = 1  # Количество пустых форм для добавления подинструкций
-    fields = ('is_active', 'title', 'description', 'url', 'photo')  # Поля, которые будут отображаться
+    fields = ('is_active',  'article', 'title', 'description', 'url', 'photo')  # Поля, которые будут отображаться
     # ordering = ('order',)  # Сортировка подинструкций по полю order
 
 

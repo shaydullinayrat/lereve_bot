@@ -1,0 +1,160 @@
+services:
+  # Сервис для Redis
+  redis:
+    container_name: redis
+    image: redis:7.4.1-alpine
+    hostname: redis
+    ports:
+      - "6379:6379"
+    volumes:
+      - redis_data:/data
+    networks:
+      - mynetwork
+
+  # Сервис для postgress
+  database:
+    container_name: postgres-db
+    #    build: .
+    image: postgres:16.6-alpine
+#    restart: unless-stopped
+    environment:
+      - POSTGRES_USER=lereve_user
+      - POSTGRES_DB=lereve_db
+      - POSTGRES_PASSWORD=lereve_password
+    ports:
+      - "5432:5432"
+    command: >
+      postgres
+      -c listen_addresses='*'  
+      -c unix_socket_directories=''
+#    volumes:
+#      - postgres_data:/var/lib/postgresql/data
+    networks:
+      - mynetwork
+
+  # Сервис для Django
+  django-web:
+    container_name: django-web
+    build: .
+    command: python manage.py runserver 0.0.0.0:8000
+
+    #    command: uvicorn core.asgi:application --host 0.0.0.0 --port 8000
+    volumes:
+      - .:/lereve_app
+    environment:
+      - DB_HOST=database
+      - DB_NAME=lereve_db
+      - DB_USER=lereve_user
+      - DB_PASS=lereve_password
+      - PYTHONUNBUFFERED=1
+      - DEBUG=True
+    ports:
+      - "8000:8000"
+    depends_on:
+      - database
+      - redis
+    networks:
+      - mynetwork
+
+
+  celery-worker:
+    container_name: celery-worker
+    build: .
+    hostname: celery_worker
+    entrypoint: celery
+    command: -A core worker --loglevel=info
+    volumes:
+      - .:/lereve_app
+    links:
+      - redis
+    depends_on:
+      - redis
+      - database  # Убедитесь, что зависимость от db здесь есть
+    environment:
+      - DB_HOST=database
+      - DB_NAME=lereve_db
+      - DB_USER=lereve_user
+      - DB_PASS=lereve_password
+      - REDIS_HOST=redis  # Имя сервиса Redis
+      - REDIS_PORT=6379
+    networks:
+      - mynetwork
+
+  celery-beat:
+    container_name: celery_beat
+    build:
+      context: .
+    command: celery -A core beat --loglevel=info
+    volumes:
+      - .:/lereve_app
+    depends_on:
+      - redis
+      - database
+      - celery-worker # Убедитесь, что зависимость от db здесь есть
+    environment:
+      - DB_HOST=database
+      - DB_NAME=lereve_db
+      - DB_USER=lereve_user
+      - DB_PASS=lereve_password
+      - REDIS_HOST=redis  # Имя сервиса Redis
+      - REDIS_PORT=6379
+    networks:
+      - mynetwork
+
+
+  telegram-bot:
+    container_name: telegram-bot
+    build: .
+    command: python manage.py runbot  # Запуск бота
+    depends_on:
+      - django-web
+      - redis
+      - celery-beat
+      - celery-worker
+      - database
+    environment:
+      - DB_HOST=database
+      - DB_NAME=lereve_db
+      - DB_USER=lereve_user
+      - DB_PASS=lereve_password
+      - REDIS_HOST=redis  # Имя сервиса Redis
+      - REDIS_PORT=6379
+#    volumes:
+#      - bot_data:/data
+    networks:
+      - mynetwork
+
+
+  flower:
+    build: .
+    container_name: flower
+    hostname: flower
+    entrypoint: celery
+    command: -A core flower --port=5555
+    volumes:
+      - .:/lereve_app
+    links:
+      - django-web
+      #      - async-web
+      - redis
+      - celery-beat
+      - celery-worker
+      - database
+
+    ports:
+      - "5555:5555"
+    depends_on:
+      - redis
+      - celery-worker
+      - celery-beat
+    networks:
+      - mynetwork
+
+
+networks:
+  mynetwork:
+    driver: bridge
+
+volumes:
+  redis_data:
+  bot_data:

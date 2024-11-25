@@ -13,6 +13,7 @@ class Client(models.Model):
     # Юзернейм пользователя в Telegram (может быть пустым)
     username = models.CharField(max_length=100, blank=True, null=True)
     # Код языка пользователя (например, 'ru' для русского, 'en' для английского)
+    wb_username = models.CharField(max_length=100, blank=True, null=True)
     language_code = models.CharField(max_length=10, blank=True, null=True)
     # Дата и время, когда запись была создана. Заполняется автоматически.
     created_at = models.DateTimeField(auto_now_add=True)  # Дата и время создания

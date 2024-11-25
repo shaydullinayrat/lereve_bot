@@ -4,6 +4,7 @@ from aiogram_bot.flows.instructions.keyboards import instructions_keyboard, subi
 from aiogram_bot.flows.instructions.texts import no_active_instructions_text
 from aiogram_bot.flows.main_menu.keyboards import start_keyboard
 from aiogram_bot.flows.main_menu.texts import welcome_text
+from aiogram_bot.flows.main_menu.utils import get_welcome_text
 from aiogram_bot.utils import send_callback_aiogram_message, send_message_aiogram_message
 from apps.instructions.models import Instruction, SubInstruction
 
@@ -98,9 +99,14 @@ def get_next_subinstruction_from_subinstruction(subinstruction):
 
 async def show_subinstruction(callback, subinstruction_id):
     subinstruction = await SubInstruction.objects.aget(pk=subinstruction_id)
+    instructions_count = await sync_to_async(lambda: Instruction.objects.filter(is_active=True).count())()
+    back_button = 'instructions'
     if subinstruction:
         next_subinstruction_id = await get_next_subinstruction_from_subinstruction(subinstruction)
-        keyboard = await subinstruction_keyboard(next_subinstruction_id)
+        if instructions_count == 1:
+            back_button = 'start'
+
+        keyboard = await subinstruction_keyboard(next_subinstruction_id, back_button)
 
         text = f'<b>{subinstruction.title}</b>\n{subinstruction.text}'
 
@@ -119,16 +125,20 @@ async def show_subinstruction(callback, subinstruction_id):
             )
     else:
         await send_message_aiogram_message(
-            callback.message, welcome_text, start_keyboard()
+            callback.message, get_welcome_text(callback.message), start_keyboard()
         )
 
 
 async def show_instruction(callback, instruction_id):
     instruction = await Instruction.objects.prefetch_related("subinstructions").aget(pk=instruction_id)
+    instructions_count = await sync_to_async(lambda: Instruction.objects.filter(is_active=True).count())()
     if instruction:
         next_subinstruction_id = await get_first_subinstruction(instruction)
+        back_button = 'instructions'
 
-        keyboard = await subinstruction_keyboard(next_subinstruction_id)
+        if instructions_count == 1:
+            back_button = 'start'
+        keyboard = await subinstruction_keyboard(next_subinstruction_id, back_button)
 
         text = f'<b>{instruction.title}</b>\n{instruction.text}'
 
@@ -147,5 +157,5 @@ async def show_instruction(callback, instruction_id):
             )
     else:
         await send_message_aiogram_message(
-            callback.message, welcome_text, start_keyboard()
+            callback.message, 'К сожалению данная инструкция неактуальна', start_keyboard()
         )
