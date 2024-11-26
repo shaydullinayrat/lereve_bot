@@ -81,7 +81,6 @@ async def show_bonus(callback, bonus_id, back_button='start'):
                                                     created_at__gte=time_to_null_bonus
                                                     ).count())()
 
-            print('client_bonus_requests_count ', client_bonus_requests_count)
             if client_bonus_requests_count > 0:
                 await callback.message.answer(
                     text=f'<b>Вы уже воспользовались данной бонусной программой </b>. \n\nПовторно в ней участовать можно будет через <b> {FEEDBACK_REVIEW_DATE_CHECK_DAYS} дней</b> после первого участия',
