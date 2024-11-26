@@ -1,4 +1,4 @@
-у меня проект lereve_bot. Веб-сервис будет запускаться по домену: lrv.davam.online.
+у меня проект lereve. Веб-сервис будет запускаться по домену: lereve.vps.myjino.ru.
 Написан на django==4
 Использую дополнительно:
 асинхронный телеграм бот на aiogram==3.15
@@ -8,183 +8,37 @@ redis==5.2.0
 celery==5.4.0
 django-celery-beat==2.7.0
 
-подскажи на чем лучше запускать: gunicorn uvicorn или что-то еще.
-
-И напиши инструкции по настройкам сервере ubuntu
+проект будет называться lereve
+веб приложение будет называться lereve_site
+Мой телеграм бот будет называться lereve_bot
+сайт надо запустить на gunicorn и supervisor
 Запускаю без докера
+И напиши инструкции по настройкам сервере ubuntu 22.04 LTS
 
+код проекта находится здесь: https://github.com/shaydullinayrat/lereve_bot.git
 
+lereve-server: crg*xqhY9pzq
+sudo apt install -y python3-pip python3-dev  python3-venv git nginx supervisor
+#sudo apt install -y python3-pip python3-dev libpq-dev build-essential libssl-dev libffi-dev python3-venv git nginx supervisor
 
-Инструкция:
-
-sudo apt update && sudo apt upgrade -y
-sudo apt install python3 python3-pip python3-venv nginx postgresql postgresql-contrib redis -y
+sudo mkdir -p /webapps/
+cd /webapps/lereve_bot
+python3 -m venv venv
+source venv/bin/activate
+pip install -r requirements.txt
 
 
 POSTGRES
-sudo -i -u postgres
-createuser --interactive
-createdb -O lereve_user lereve_db
-sudo -i -u postgres
-psql
-ALTER USER lereve_user WITH PASSWORD '6wbF832Y>R9H';
-sudo nano /etc/postgresql/14/main/pg_hba.conf
-local   all             lereve_user                                md5
-sudo systemctl restart postgresql
-
-
-POSTGRES - 2:
+sudo apt install postgresql postgresql-contrib
 sudo -u postgres psql
 CREATE DATABASE lereve_db;
-CREATE USER lereve_user WITH PASSWORD 'your_password';
+CREATE USER lereve_user WITH PASSWORD 'MLl!8)co37Oo';
 ALTER ROLE lereve_user SET client_encoding TO 'utf8';
 ALTER ROLE lereve_user SET default_transaction_isolation TO 'read committed';
 ALTER ROLE lereve_user SET timezone TO 'UTC';
 GRANT ALL PRIVILEGES ON DATABASE lereve_db TO lereve_user;
-
-DJANGO-APP
-cd /var/www/lereve_bot
-python3 -m venv venv
-source venv/bin/activate
-
-pip install --upgrade pip
-pip install -r requirements.txt
-python manage.py collectstatic
-
-mv .env_prod .env
-
-
-GUNICORN:
-pip install gunicorn
-sudo nano /etc/systemd/system/lereve_bot.service
-
-[Unit]
-Description=Gunicorn instance for lereve_bot
-After=network.target
-
-[Service]
-User=www-data
-Group=www-data
-WorkingDirectory=/var/www/lereve_bot
-Environment="PATH=/var/www/lereve_bot/venv/bin"
-ExecStart=/var/www/lereve_bot/venv/bin/gunicorn --workers 3 --bind unix:/var/www/lereve_bot/lereve_bot.sock lereve_bot.core.wsgi:application
-
-[Install]
-WantedBy=multi-user.target
-
-sudo systemctl daemon-reload
-sudo systemctl start lereve_bot
-sudo systemctl enable lereve_bot
-
-
-NGINX
-sudo nano /etc/nginx/sites-available/lereve_bot
-
-server {
-    server_name lrv.davam.online;
-    access_log  /var/log/nginx/portal_access.log;
-    error_log  /var/log/nginx/portal_error.log;
-
-    location /static/ {
-        alias /var/www/lereve_bot/static/;
-    }
-
-    location / {
-        proxy_pass http://unix:/var/www/lereve_bot/lereve_bot.sock;
-        proxy_set_header Host $host;
-        proxy_set_header X-Real-IP $remote_addr;
-        proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
-        proxy_set_header X-Forwarded-Proto $scheme;
-    }
-}
-
-sudo ln -s /etc/nginx/sites-available/lereve_bot /etc/nginx/sites-enabled/
-sudo nginx -t
-sudo systemctl restart nginx
-
-CELERY
-sudo nano /etc/systemd/system/celery.service
-
-[Unit]
-Description=Celery Service
-After=network.target
-
-[Service]
-User=www-data
-Group=www-data
-WorkingDirectory=/var/www/lereve_bot
-Environment="PATH=/var/www/lereve_bot/venv/bin"
-ExecStart=/var/www/lereve_bot/venv/bin/celery -A core worker --loglevel=info
-
-[Install]
-WantedBy=multi-user.target
-
-
-FLOWER
-sudo nano /etc/systemd/system/flower.service
-
-[Unit]
-Description=Flower Service
-After=network.target
-
-[Service]
-User=www-data
-Group=www-data
-WorkingDirectory=/var/www/lereve_bot
-Environment="PATH=/var/www/lereve_bot/venv/bin"
-ExecStart=/var/www/lereve_bot/venv/bin/celery -A lereve_bot flower --port=5555
-
-[Install]
-WantedBy=multi-user.target
-
-
-sudo systemctl daemon-reload
-sudo systemctl start celery
-sudo systemctl enable celery
-sudo systemctl start flower
-sudo systemctl enable flower
-
-
-BOT
-
-sudo nano /etc/systemd/system/lereve_bot_bot.service
-
-variant - 1
-[Unit]
-Description=Telegram Bot for lereve_bot
-After=network.target
-
-[Service]
-User=www-data
-Group=www-data
-WorkingDirectory=/var/www/lereve_bot
-Environment="PATH=/var/www/lereve_bot/venv/bin"
-ExecStart=/var/www/lereve_bot/venv/bin/python manage.py runbot
-Restart=always
-
-[Install]
-WantedBy=multi-user.target
-
-sudo systemctl daemon-reload
-sudo systemctl start lereve_bot_bot
-sudo systemctl status lereve_bot_bot
+\q
 
 
 
 
-variant - 2
-
-
-[Unit]
-Description=Telegram Bot Service for lereve_bot
-After=network.target
-
-[Service]
-User=www-data
-Group=www-data
-WorkingDirectory=/var/www/lereve_bot
-Environment="PATH=/var/www/lereve_bot/venv/bin"
-ExecStart=/var/www/lereve_bot/venv/bin/python /var/www/lereve_bot/aiogram_bot/main.py
-
-[Install]
-WantedBy=multi-user.target

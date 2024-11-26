@@ -109,7 +109,7 @@ DATABASES = {
         'HOST': 'localhost',
         'USER': 'lereve_user',
         'NAME': 'lereve_db',
-        'PASSWORD': 'your_password',
+        'PASSWORD': 'MLl!8)co37Oo',
         'PORT': '5432',
         # 'NAME': os.environ.get('DB_NAME'),
         # 'USER': os.environ.get('DB_USER'),
