@@ -106,7 +106,8 @@ DATABASES = {
         # 'NAME': os.environ.get('DB_HOST'),
         # 'NAME': f'{DB_NAME}',
         # 'USER': f'{DB_USER}',
-        'PASSWORD': os.environ.get('DB_PASS'),
+        # 'PASSWORD': os.environ.get('DB_PASS'),
+        'PASSWORD': '6wbF832Y>R9H',
         'PORT': '5432',
         # 'OPTIONS': {
         #     'unix_socket': '/var/run/postgresql'  # Убедитесь, что путь совпадает

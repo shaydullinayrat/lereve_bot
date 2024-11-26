@@ -73,6 +73,8 @@ sudo nano /etc/nginx/sites-available/lereve_bot
 
 server {
     server_name lrv.davam.online;
+    access_log  /var/log/nginx/portal_access.log;
+    error_log  /var/log/nginx/portal_error.log;
 
     location /static/ {
         alias /var/www/lereve_bot/static/;
