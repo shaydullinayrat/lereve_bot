@@ -99,7 +99,8 @@ DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql',
         # 'ENGINE': 'django_postgres_async.backend',
-        'HOST': os.environ.get('DB_HOST'),
+        # 'HOST': os.environ.get('DB_HOST'),
+        'HOST': 'localhost',
         'NAME': os.environ.get('DB_NAME'),
         'USER': os.environ.get('DB_USER'),
         # 'NAME': os.environ.get('DB_HOST'),
@@ -160,14 +161,16 @@ STATICFILES_DIRS = [
 
 ASGI_APPLICATION = "core.asgi.application"
 
+REDIS_HOST = 'localhost'
 
 # Redis как бэкенд и брокер для Celery
 # CELERY_BROKER_URL = 'redis://redis:6379/0'
 # CELERY_RESULT_BACKEND = 'redis://redis:6379/0'
 
-CELERY_BROKER_URL = 'redis://localhost:6379/0'
-CELERY_RESULT_BACKEND = 'redis://localhost:6379/0'
-REDIS_HOST = 'localhost'
+
+CELERY_BROKER_URL = f'redis://{REDIS_HOST}:6379/0'
+CELERY_RESULT_BACKEND = f'redis://{REDIS_HOST}:6379/0'
+
 REDIS_PORT = 6379
 
 

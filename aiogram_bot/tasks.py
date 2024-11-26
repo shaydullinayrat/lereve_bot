@@ -6,10 +6,10 @@ from celery import shared_task
 
 import json
 # Настройка Redis
-from core.settings import WB_API_TOKEN, WB_FEEDBACK_API_URL, FEEDBACK_REVIEW_DATE_CHECK_MINUTES
+from core.settings import WB_API_TOKEN, WB_FEEDBACK_API_URL, FEEDBACK_REVIEW_DATE_CHECK_MINUTES, REDIS_HOST
 
 # redis_client = redis.StrictRedis(host='redis', port=6379, db=0)
-redis_client = redis.StrictRedis(host='localhost', port=6379, db=0)
+redis_client = redis.StrictRedis(host=REDIS_HOST, port=6379, db=0)
 
 # URL API Wildberries
 
