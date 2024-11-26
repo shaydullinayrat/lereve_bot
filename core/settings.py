@@ -36,7 +36,7 @@ ALLOWED_HOSTS = ['127.0.0.1',
                  'lrv.davam.online',
                  'mindskills.fun',
                  'e23dd8c01b8f.vps.myjino.ru']
-ALLOWED_HOSTS = ['*']
+# ALLOWED_HOSTS = ['*']
 # Application definition
 
 INSTALLED_APPS = [
