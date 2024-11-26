@@ -29,7 +29,13 @@ SECRET_KEY = env.str('SECRET_KEY')
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = env.bool('DEBUG')
 
-ALLOWED_HOSTS = ['*']
+ALLOWED_HOSTS = ['127.0.0.1',
+                 '0.0.0.0',
+                 '195.161.68.242',
+                 'localhost',
+                 'lrv.davam.online',
+                 'mindskills.fun',
+                 'e23dd8c01b8f.vps.myjino.ru']
 
 # Application definition
 
@@ -176,8 +182,6 @@ CELERY_RESULT_BACKEND = f'redis://{REDIS_HOST}:6379/0'
 
 REDIS_PORT = 6379
 
-
-
 CELERY_TIMEZONE = 'UTC'
 CELERY_ACCEPT_CONTENT = ['json']
 CELERY_TASK_SERIALIZER = 'json'
@@ -198,11 +202,8 @@ TELEGRAM_CARE_SERVICE_ID = env.str('TELEGRAM_CARE_SERVICE_ID')
 TELEGRAM_CARE_SERVICE_USERNAME = env.str('TELEGRAM_CARE_SERVICE_USERNAME')
 TELEGRAM_MANAGER_USERNAME = env.str('TELEGRAM_MANAGER_USERNAME')
 
-
-
 WB_FEEDBACK_API_URL = "https://feedbacks-api.wildberries.ru/api/v1/feedbacks"
 WB_API_TOKEN = 'eyJhbGciOiJFUzI1NiIsImtpZCI6IjIwMjQxMTE4djEiLCJ0eXAiOiJKV1QifQ.eyJlbnQiOjEsImV4cCI6MTc0Nzk4NDE3MiwiaWQiOiIwMTkzNTAyMS0zMDFiLTdmMTktOTIxZC04OTM1YTBkMjVlNmMiLCJpaWQiOjIzMDc5MDM0LCJvaWQiOjg1MTY4LCJzIjo3OTM0LCJzaWQiOiI5NzdjODVkZC04ZGZjLTU4MGQtODU5Mi0yMGM3ZmQ5ZGRlZWYiLCJ0IjpmYWxzZSwidWlkIjoyMzA3OTAzNH0.GuYZF4tq--_6TLXYR7S-gdueHWcvz3hWY6-s9fNctFgazbZsJykZWVpsiWrYfE3146jDODSjkDYLwC1UYSbjOg'
-
 
 FEEDBACK_REVIEW_DATE_CHECK_MINUTES = 60
 FEEDBACK_REVIEW_DATE_CHECK_DAYS = 30
