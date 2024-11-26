@@ -156,9 +156,11 @@ USE_TZ = True
 # https://docs.djangoproject.com/en/4.2/howto/static-files/
 
 STATIC_URL = 'static/'
+MEDIA_URL = 'media/'
 
 # Относительный путь для хранения собранных статических файлов
 STATIC_ROOT = os.path.join(BASE_DIR, 'static/')
+MEDIA_ROOT = os.path.join(BASE_DIR, 'media/')
 
 # Дополнительно: пользовательские директории со статическими файлами
 STATICFILES_DIRS = [
@@ -194,6 +196,7 @@ CELERY_TASK_SERIALIZER = 'json'
 CELERY_IMPORTS = (
     'aiogram_bot.tasks',
 )
+
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 TOKEN_BOT = env.str('TOKEN_BOT')
