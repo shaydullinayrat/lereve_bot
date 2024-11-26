@@ -56,6 +56,48 @@ sudo nano /etc/supervisor/conf.d/celery.conf
 
 
 
+[program:celery]
+command=/webapps/lereve_bot/bin/celery -A core worker --loglevel=info
+directory=/webapps/lereve_bot
+user=www-data
+numprocs=1
+autostart=true
+autorestart=true
+stderr_logfile=/var/log/celery.err.log
+stdout_logfile=/var/log/celery.out.log
+
+CELERY-BEAT
+sudo nano /etc/supervisor/conf.d/celery-beat.conf
+
+[program:celery-beat]
+command=/webapps/lereve_bot/bin/celery -A core beat --loglevel=info --pidfile=
+directory=/webapps/lereve_bot
+user=www-data
+numprocs=1
+autostart=true
+autorestart=true
+stderr_logfile=/var/log/celery-beat.err.log
+stdout_logfile=/var/log/celery-beat.out.log
+
+
+TELEGRAM_BOT
+sudo nano /etc/supervisor/conf.d/telegram-bot.conf
+
+[program:telegram-bot]
+command=/webapps/lereve_bot/bin/python /webapps/lereve_bot/aiogram_bot/main.py
+directory=/webapps/lereve_bot
+user=www-data
+numprocs=1
+autostart=true
+autorestart=true
+stderr_logfile=/var/log/telegram-bot.err.log
+stdout_logfile=/var/log/telegram-bot.out.log
+
+
+sudo supervisorctl reread
+sudo supervisorctl update
+sudo supervisorctl restart all
+
 
 GUNICORN
 pip install gunicorn
@@ -154,5 +196,13 @@ sudo supervisorctl reread
 sudo supervisorctl update
 sudo supervisorctl restart lereve
 
+
+
+
+
+ls -ld /webapps/lereve_bot/media
+
+sudo chown -R www-data:www-data /webapps/lereve_bot/media
+sudo chmod -R 755 /webapps/lereve_bot/media
 
 
