@@ -28,7 +28,7 @@ SECRET_KEY = env.str('SECRET_KEY')
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = env.bool('DEBUG')
-DEBUG = True
+# DEBUG = True
 
 ALLOWED_HOSTS = ['127.0.0.1',
                  '0.0.0.0',
@@ -37,6 +37,10 @@ ALLOWED_HOSTS = ['127.0.0.1',
                  'lrv.davam.online',
                  'mindskills.fun',
                  'a5ce8a79a634.vps.myjino.ru']
+
+CSRF_TRUSTED_ORIGINS = [
+    'https://a5ce8a79a634.vps.myjino.ru',
+]
 # ALLOWED_HOSTS = ['*']
 # Application definition
 # ALLOWED_HOSTS = ['a5ce8a79a634.vps.myjino.ru', 'localhost', '127.0.0.1']
