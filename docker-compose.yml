@@ -45,7 +45,7 @@ services:
       - DB_HOST=database
       - DB_NAME=lereve_db
       - DB_USER=lereve_user
-      - DB_PASS=lereve_password
+      - DB_PASS=6wbF832Y>R9H
       - PYTHONUNBUFFERED=1
       - DEBUG=True
     ports:
@@ -74,7 +74,7 @@ services:
       - DB_HOST=database
       - DB_NAME=lereve_db
       - DB_USER=lereve_user
-      - DB_PASS=lereve_password
+      - DB_PASS=6wbF832Y>R9H
       - REDIS_HOST=redis  # Имя сервиса Redis
       - REDIS_PORT=6379
     networks:
@@ -95,7 +95,7 @@ services:
       - DB_HOST=database
       - DB_NAME=lereve_db
       - DB_USER=lereve_user
-      - DB_PASS=lereve_password
+      - DB_PASS=6wbF832Y>R9H
       - REDIS_HOST=redis  # Имя сервиса Redis
       - REDIS_PORT=6379
     networks:
@@ -116,7 +116,7 @@ services:
       - DB_HOST=database
       - DB_NAME=lereve_db
       - DB_USER=lereve_user
-      - DB_PASS=lereve_password
+      - DB_PASS=6wbF832Y>R9H
       - REDIS_HOST=redis  # Имя сервиса Redis
       - REDIS_PORT=6379
 #    volumes:
