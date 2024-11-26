@@ -130,7 +130,8 @@ async def show_product_feedbacks(callback, state, data):
     filtered_feedbacks = [item for item in wb_feedbacks if
                           item['article'] == article
                           and item['product_valuation'] == 5
-                          and item['wb_feedback_id'] not in wb_feedback_id_list]
+                          and item['wb_feedback_id'] not in wb_feedback_id_list
+                          and item['text'].lower().startswith("супер")]
 
     if filtered_feedbacks:
         # review_date

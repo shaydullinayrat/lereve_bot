@@ -147,6 +147,14 @@ USE_TZ = True
 
 STATIC_URL = 'static/'
 
+# Относительный путь для хранения собранных статических файлов
+STATIC_ROOT = os.path.join(BASE_DIR, 'static/')
+
+# Дополнительно: пользовательские директории со статическими файлами
+STATICFILES_DIRS = [
+    os.path.join(BASE_DIR, 'staticfiles/'),  # Например, директория для пользовательской статики
+]
+
 # Default primary key field type
 # https://docs.djangoproject.com/en/4.2/ref/settings/#default-auto-field
 
