@@ -56,112 +56,22 @@ sudo nano /etc/supervisor/conf.d/celery.conf
 
 
 
+
 GUNICORN
 pip install gunicorn
 sudo apt install nano -y
-sudo nano /etc/systemd/system/gunicorn.service
-
-
+sudo nano /etc/systemd/system/gunicorn.socket
 [Unit]
-Description=gunicorn daemon for lereve_site
-After=network.target
+Description=gunicorn socket
 
-[Service]
-User=lereve
-Group=webapps
-WorkingDirectory=/webapps/lereve_bot
-ExecStart=/webapps/lereve_bot/venv/bin/gunicorn --workers 3 --bind unix:/webapps/lereve_bot/lereve_site.sock core.wsgi:application
+[Socket]
+ListenStream=/run/gunicorn.sock
 
 [Install]
-WantedBy=multi-user.target
-
-sudo systemctl daemon-reload
-sudo systemctl start gunicorn
-sudo systemctl enable gunicorn
+WantedBy=sockets.target
 
 
-
-NGINX
-sudo nano /etc/nginx/sites-available/lereve_site
-
-server {
-    listen 80;
-    server_name 3f2319bf2057.vps.myjino.ru;
-    access_log  /var/log/nginx/access.log;
-    error_log  /var/log/nginx/error.log;
-    location /static/ {
-            alias /webapps/lereve_bot/static;
-        }
-    location /media/ {
-            alias /webapps/lereve_bot/media;
-        }
-    location / {
-        proxy_pass http://unix:/webapps/lereve_bot/lereve_site.sock;
-        proxy_set_header Host $host;
-        proxy_set_header X-Real-IP $remote_addr;
-        proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
-        proxy_set_header X-Forwarded-Proto $scheme;
-    }
-}
-
-
-
-
-server {
-        listen 80 ;
-        #listen [::]:80 default_server;
-
-        server_name mindskills.fun e23dd8c01b8f.vps.myjino.ru lrv.davam.online 195.161.68.242;
-
-        access_log  /var/log/nginx/access.log;
-        error_log  /var/log/nginx/error.log;
-
-        #location = /favicon.ico { access_log off; log_not_found off; }
-        location /static/ {
-            alias /var/www/lereve_bot/static;
-        }
-
-        location /media/ {
-            alias /var/www/lereve_bot/media;
-        }
-
-        location / {
-            proxy_pass http://unix:/run/gunicorn.sock;
-            #proxy_set_header Host $host;
-            #proxy_set_header X-Forwarded-Host $server_name;
-            #proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
-            #proxy_set_header X-Forwarded-Proto https;
-            proxy_set_header X-Real-IP $remote_addr;
-            #proxy_redirect off;
-
-        }
-}
-
-
-sudo ln -s /etc/nginx/sites-available/lereve_site /etc/nginx/sites-enabled
-sudo nginx -t
-sudo systemctl restart nginx
-
-
-SUPERVISOR
-sudo nano /etc/supervisor/conf.d/gunicorn.conf
-
-[program:lereve]
-command=/webapps/lereve_bot/venv/bin/gunicorn --workers 3 --bind unix://webapps/lereve_bot/lereve_site.sock core.wsgi:application
-directory=/webapps/lereve_bot
-user=lereve
-autostart=true
-autorestart=true
-stderr_logfile=/var/log/gunicorn.err.log
-stdout_logfile=/var/log/gunicorn.out.log
-
-
-sudo supervisorctl reread
-sudo supervisorctl update
-sudo supervisorctl restart lereve
-
-
-
+sudo nano /etc/systemd/system/gunicorn.service
 
 [Unit]
 Description=gunicorn daemon
@@ -181,24 +91,68 @@ ExecStart=/webapps/lereve_bot/bin/gunicorn \
 [Install]
 WantedBy=multi-user.target
 
+sudo systemctl start gunicorn.socket
+sudo systemctl enable gunicorn.socket
 
+sudo systemctl status gunicorn.socket
+file /run/gunicorn.sock
+sudo journalctl -u gunicorn.socket
+sudo systemctl status gunicorn
+curl --unix-socket /run/gunicorn.sock localhost
+sudo journalctl -u gunicorn
+sudo systemctl daemon-reload
+sudo systemctl restart gunicorn
 
+NGINX
 sudo nano /etc/nginx/sites-available/lereve
 
+upstream lereve_server {
+    server unix:/run/gunicorn.sock fail_timeout=0;
+}
 
 server {
     listen 80;
-    server_name a5ce8a79a634.vps.myjino.ru;
-
-    #location = /favicon.ico { access_log off; log_not_found off; }
-    #location /static/ {
-    #    alias /webapps/lereve_bot/static/;
-    #}
-
+    server_name e23dd8c01b8f.vps.myjino.ru mindskills.fun;
+    location /static/ {
+        alias /webapps/lereve_bot/static/;  # Укажите путь к STATIC_ROOT
+    }
+    location /media/ {
+        alias /webapps/lereve_bot/media/;  # Укажите путь к STATIC_ROOT
+    }
     location / {
-        include proxy_params;
-        proxy_pass http://unix:/run/gunicorn.sock;
+        proxy_set_header Host $host;
+        proxy_set_header X-Real-IP $remote_addr;
+        proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+        proxy_set_header X-Forwarded-Proto $scheme;
+        proxy_redirect off;
+
+        proxy_pass http://lereve_server;
     }
 }
 
+
+
 sudo ln -s /etc/nginx/sites-available/lereve /etc/nginx/sites-enabled
+sudo nginx -t
+sudo systemctl restart nginx
+
+
+SUPERVISOR
+sudo nano /etc/supervisor/conf.d/gunicorn.conf
+
+[program:lereve]
+command=/webapps/lereve_bot/venv/bin/gunicorn --workers 3 --bind unix:/run/gunicorn.sock core.wsgi:application
+directory=/webapps/lereve_bot
+user=www-data
+autostart=true
+autorestart=true
+stderr_logfile=/var/log/gunicorn.err.log
+stdout_logfile=/var/log/gunicorn.out.log
+
+
+sudo supervisorctl reread
+sudo supervisorctl update
+sudo supervisorctl restart lereve
+
+
+
