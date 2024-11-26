@@ -7,7 +7,7 @@ db.sqlite3
 media
 
 #redis
-dump.rdb
+#dump.rdb
 
 # Backup files #
 *.bak
