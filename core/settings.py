@@ -38,6 +38,7 @@ ALLOWED_HOSTS = ['127.0.0.1',
                  'e23dd8c01b8f.vps.myjino.ru']
 # ALLOWED_HOSTS = ['*']
 # Application definition
+ALLOWED_HOSTS = ['a5ce8a79a634.vps.myjino.ru', 'localhost', '127.0.0.1']
 
 INSTALLED_APPS = [
     'django.contrib.admin',

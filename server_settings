@@ -180,3 +180,25 @@ ExecStart=/webapps/lereve_bot/bin/gunicorn \
 
 [Install]
 WantedBy=multi-user.target
+
+
+
+sudo nano /etc/nginx/sites-available/lereve
+
+
+server {
+    listen 80;
+    server_name a5ce8a79a634.vps.myjino.ru;
+
+    #location = /favicon.ico { access_log off; log_not_found off; }
+    #location /static/ {
+    #    alias /webapps/lereve_bot/static/;
+    #}
+
+    location / {
+        include proxy_params;
+        proxy_pass http://unix:/run/gunicorn.sock;
+    }
+}
+
+sudo ln -s /etc/nginx/sites-available/lereve /etc/nginx/sites-enabled
