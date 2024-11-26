@@ -15,18 +15,25 @@ django-celery-beat==2.7.0
 Запускаю без докера
 И напиши инструкции по настройкам сервере ubuntu 22.04 LTS
 
-код проекта находится здесь: https://github.com/shaydullinayrat/lereve_bot.git
+код проекта находится здесь: git clone https://github.com/shaydullinayrat/lereve_bot.git
+
+
 
 lereve-server: crg*xqhY9pzq
 sudo apt install -y python3-pip python3-dev  python3-venv git nginx supervisor
 #sudo apt install -y python3-pip python3-dev libpq-dev build-essential libssl-dev libffi-dev python3-venv git nginx supervisor
 
+sudo groupadd --system webapps
+sudo useradd --system --gid webapps --shell /bin/bash --home /webapps/lereve_bot lereve
+
 sudo mkdir -p /webapps/
 cd /webapps/lereve_bot
 python3 -m venv venv
+
 source venv/bin/activate
 pip install -r requirements.txt
 
+mv .env_prod .env
 
 POSTGRES
 sudo apt install postgresql postgresql-contrib
@@ -40,5 +47,136 @@ GRANT ALL PRIVILEGES ON DATABASE lereve_db TO lereve_user;
 \q
 
 
+REDIS
+sudo apt install redis-server
+sudo systemctl status redis
+
+CELERY
+sudo nano /etc/supervisor/conf.d/celery.conf
 
 
+
+GUNICORN
+pip install gunicorn
+sudo apt install nano -y
+sudo nano /etc/systemd/system/gunicorn.service
+
+
+[Unit]
+Description=gunicorn daemon for lereve_site
+After=network.target
+
+[Service]
+User=lereve
+Group=webapps
+WorkingDirectory=/webapps/lereve_bot
+ExecStart=/webapps/lereve_bot/venv/bin/gunicorn --workers 3 --bind unix:/webapps/lereve_bot/lereve_site.sock core.wsgi:application
+
+[Install]
+WantedBy=multi-user.target
+
+sudo systemctl daemon-reload
+sudo systemctl start gunicorn
+sudo systemctl enable gunicorn
+
+
+
+NGINX
+sudo nano /etc/nginx/sites-available/lereve_site
+
+server {
+    listen 80;
+    server_name 3f2319bf2057.vps.myjino.ru;
+    access_log  /var/log/nginx/access.log;
+    error_log  /var/log/nginx/error.log;
+    location /static/ {
+            alias /webapps/lereve_bot/static;
+        }
+    location /media/ {
+            alias /webapps/lereve_bot/media;
+        }
+    location / {
+        proxy_pass http://unix:/webapps/lereve_bot/lereve_site.sock;
+        proxy_set_header Host $host;
+        proxy_set_header X-Real-IP $remote_addr;
+        proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+        proxy_set_header X-Forwarded-Proto $scheme;
+    }
+}
+
+
+
+
+server {
+        listen 80 ;
+        #listen [::]:80 default_server;
+
+        server_name mindskills.fun e23dd8c01b8f.vps.myjino.ru lrv.davam.online 195.161.68.242;
+
+        access_log  /var/log/nginx/access.log;
+        error_log  /var/log/nginx/error.log;
+
+        #location = /favicon.ico { access_log off; log_not_found off; }
+        location /static/ {
+            alias /var/www/lereve_bot/static;
+        }
+
+        location /media/ {
+            alias /var/www/lereve_bot/media;
+        }
+
+        location / {
+            proxy_pass http://unix:/run/gunicorn.sock;
+            #proxy_set_header Host $host;
+            #proxy_set_header X-Forwarded-Host $server_name;
+            #proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+            #proxy_set_header X-Forwarded-Proto https;
+            proxy_set_header X-Real-IP $remote_addr;
+            #proxy_redirect off;
+
+        }
+}
+
+
+sudo ln -s /etc/nginx/sites-available/lereve_site /etc/nginx/sites-enabled
+sudo nginx -t
+sudo systemctl restart nginx
+
+
+SUPERVISOR
+sudo nano /etc/supervisor/conf.d/gunicorn.conf
+
+[program:lereve]
+command=/webapps/lereve_bot/venv/bin/gunicorn --workers 3 --bind unix://webapps/lereve_bot/lereve_site.sock core.wsgi:application
+directory=/webapps/lereve_bot
+user=lereve
+autostart=true
+autorestart=true
+stderr_logfile=/var/log/gunicorn.err.log
+stdout_logfile=/var/log/gunicorn.out.log
+
+
+sudo supervisorctl reread
+sudo supervisorctl update
+sudo supervisorctl restart lereve
+
+
+
+
+[Unit]
+Description=gunicorn daemon
+Requires=gunicorn.socket
+After=network.target
+
+[Service]
+User=www-data
+Group=www-data
+WorkingDirectory=/webapps/lereve_bot
+ExecStart=/webapps/lereve_bot/bin/gunicorn \
+          --access-logfile - \
+          --workers 3 \
+          --bind unix:/run/gunicorn.sock \
+          core.wsgi:application
+
+[Install]
+WantedBy=multi-user.target
