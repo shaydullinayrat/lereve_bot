@@ -33,6 +33,15 @@ local   all             lereve_user                                md5
 sudo systemctl restart postgresql
 
 
+POSTGRES - 2:
+sudo -u postgres psql
+CREATE DATABASE lereve_db;
+CREATE USER lereve_user WITH PASSWORD 'new_password';
+ALTER ROLE lereve_user SET client_encoding TO 'utf8';
+ALTER ROLE lereve_user SET default_transaction_isolation TO 'read committed';
+ALTER ROLE lereve_user SET timezone TO 'UTC';
+GRANT ALL PRIVILEGES ON DATABASE lereve_db TO lereve_user;
+
 DJANGO-APP
 cd /var/www/lereve_bot
 python3 -m venv venv
@@ -58,7 +67,7 @@ User=www-data
 Group=www-data
 WorkingDirectory=/var/www/lereve_bot
 Environment="PATH=/var/www/lereve_bot/venv/bin"
-ExecStart=/var/www/lereve_bot/venv/bin/gunicorn --workers 3 --bind unix:/var/www/lereve_bot/lereve_bot.sock lereve_bot.wsgi:application
+ExecStart=/var/www/lereve_bot/venv/bin/gunicorn --workers 3 --bind unix:/var/www/lereve_bot/lereve_bot.sock lereve_bot.core.wsgi:application
 
 [Install]
 WantedBy=multi-user.target
