@@ -3,18 +3,17 @@ import time
 from datetime import datetime, timedelta
 
 from aiogram.fsm.context import FSMContext
-from aiogram.types import FSInputFile, ReplyKeyboardMarkup, KeyboardButton, ReplyKeyboardRemove, Message
-from asgiref.sync import sync_to_async, async_to_sync
+from aiogram.types import FSInputFile, Message, ReplyKeyboardMarkup, KeyboardButton
+from asgiref.sync import sync_to_async
 from dateutil.parser import isoparse
 
 from aiogram_bot.bot import bot
 
-from aiogram_bot.flows.bonuses.keyboards import bonuses_keyboard, \
-    all_active_products_keyboard, get_all_active_products_keyboard
+from aiogram_bot.flows.bonuses.keyboards import bonuses_keyboard, get_all_active_products_keyboard, numeric_keyboard, \
+    send_phone_keyboard
 from aiogram_bot.flows.bonuses.state_forms import ClientPhoneForm
 from aiogram_bot.flows.bonuses.texts import no_active_bonus_text, my_feedback_not_exists, \
     no_feedback_for_product_in_hour
-from aiogram_bot.flows.bonuses.wb_service import get_recent_comments, TEST_NMID
 from aiogram_bot.flows.main_menu.keyboards import start_keyboard, back_to_main_menu_keyboard
 from aiogram_bot.keyboards import generate_keyboard
 
@@ -23,10 +22,7 @@ from aiogram_bot.utils import send_callback_aiogram_message, format_date_iso_to_
 from apps.bonuses.models import Bonus, BonusRequest, Feedback
 from apps.clients.models import Client
 from apps.shops.models import Product
-from core.settings import TELEGRAM_MANAGER_ID, TELEGRAM_MANAGER_USERNAME
-
-feedback_review_date_check_minutes = 60
-feedback_review_date_check_days = 30
+from core.settings import TELEGRAM_MANAGER_ID, TELEGRAM_MANAGER_USERNAME, FEEDBACK_REVIEW_DATE_CHECK_DAYS
 
 
 @sync_to_async
@@ -78,7 +74,7 @@ async def show_bonus(callback, bonus_id, back_button='start'):
         bonus = await Bonus.objects.aget(pk=bonus_id)
 
         if bonus:
-            time_to_null_bonus = datetime.now() - timedelta(days=feedback_review_date_check_days)
+            time_to_null_bonus = datetime.now() - timedelta(days=FEEDBACK_REVIEW_DATE_CHECK_DAYS)
             client_bonus_requests_count = await sync_to_async(
                 lambda: BonusRequest.objects.filter(bonus=bonus,
                                                     client__user_id=callback.from_user.id,
@@ -88,7 +84,7 @@ async def show_bonus(callback, bonus_id, back_button='start'):
             print('client_bonus_requests_count ', client_bonus_requests_count)
             if client_bonus_requests_count > 0:
                 await callback.message.answer(
-                    text=f'<b>Вы уже воспользовались данной бонусной программой </b>. \n\nПовторно в ней участовать можно будет через <b> {feedback_review_date_check_days} дней</b> после первого участия',
+                    text=f'<b>Вы уже воспользовались данной бонусной программой </b>. \n\nПовторно в ней участовать можно будет через <b> {FEEDBACK_REVIEW_DATE_CHECK_DAYS} дней</b> после первого участия',
                     reply_markup=start_keyboard()
                 )
             else:
@@ -226,7 +222,7 @@ def validate_feedback(user_id, bonus_id, article, wb_feedback_id):
             return 'same_feedback_exists'
 
         current_datetime = datetime.now()
-        check_time = current_datetime - timedelta(days=feedback_review_date_check_days)
+        check_time = current_datetime - timedelta(days=FEEDBACK_REVIEW_DATE_CHECK_DAYS)
         is_there_other_feedback_from_client = Feedback.objects.filter(product=product,
                                                                       bonus_request__client=client,
                                                                       review_date__gte=check_time
@@ -254,7 +250,6 @@ async def delete_previous_messages(message: Message, state: FSMContext):
 
 
 async def register_feedback(callback, state, data):
-    # callback_data = f'reg_fb__|bonus_id:{bonus_id}|article:{article}|fb_id:{feedback_id}'
 
     data = data.split('|')
     bonus_id = int(data[0].split(':')[1])
@@ -282,12 +277,19 @@ async def register_feedback(callback, state, data):
     elif result == 'same_client_feedback_exists':
         await callback.message.answer(
             text=f'<b>Вы уже воспользовались бонусной программой. </b>\n\n'
-                 f'Повторно участвовать можно будет только <b> через {feedback_review_date_check_days} дней </b>',
+                 f'Повторно участвовать можно будет только <b> через {FEEDBACK_REVIEW_DATE_CHECK_DAYS} дней </b>',
             reply_markup=back_to_main_menu_keyboard()
         )
     elif result.startswith('feedbacks_can_register'):
+
+        # Клавиатура с запросом телефона
+
+
+
+
         await callback.message.answer(
-            "Поздравляем! Остался последний шаг. \n\nОтправьте пожалуйста свой <b>номер телефона </b>, на который вы бы хотели <b>получить бонус</b>")
+            "Поздравляем! Остался последний шаг. \n\nОтправьте пожалуйста свой <b>номер телефона </b>, на который вы бы хотели <b>получить бонус</b>, нажав на кнопку \n\n                        <b> НИЖЕ ↓↓↓ </b>",
+        reply_markup=send_phone_keyboard)
         await state.set_state(ClientPhoneForm.phone)
 
 
@@ -339,7 +341,8 @@ async def register_bonus_request(message, state):
                                f"{user_info} хочет учавствовать в бонусной программе: {bonus_title}, телефон: {data.get('phone')}")
 
         await send_message_aiogram_message(
-            message, 'Поздравляем! Ваша заявка зарегистрирована. \n\nВ ближайшее время с вами свяжется наш администратор для перечисления денег',
+            message,
+            'Поздравляем! Ваша заявка зарегистрирована. \n\nВ ближайшее время с вами свяжется наш администратор для перечисления денег',
             start_keyboard()
         )
     else:

@@ -6,7 +6,7 @@ from celery import shared_task
 
 import json
 # Настройка Redis
-from core.settings import WB_API_TOKEN, WB_FEEDBACK_API_URL
+from core.settings import WB_API_TOKEN, WB_FEEDBACK_API_URL, FEEDBACK_REVIEW_DATE_CHECK_MINUTES
 
 # redis_client = redis.StrictRedis(host='redis', port=6379, db=0)
 redis_client = redis.StrictRedis(host='localhost', port=6379, db=0)
@@ -21,31 +21,42 @@ HEADERS = {
 def fetch_feedbacks():
     # Формируем временные метки
     now = datetime.utcnow()
-    date_from = int((now - timedelta(hours=1)).timestamp())
+    date_from = int((now - timedelta(minutes=FEEDBACK_REVIEW_DATE_CHECK_MINUTES)).timestamp())
     date_to = int(now.timestamp())
 
     to_datetime = datetime(2023, 9, 15, 0, 0, 0)
     from_datetime = datetime(2020, 7, 19, 0, 0, 0)
 
-
-    print('from_datetime ', from_datetime)
     from_datetime_unix_timestamp = int(time.mktime(from_datetime.timetuple()))
     to_datetime_unix_timestamp = int(time.mktime(to_datetime.timetuple()))
 
     date_from = from_datetime_unix_timestamp
     date_to = to_datetime_unix_timestamp
 
+    answered_params = {
+        "isAnswered": "true",
+        "take": 200,
+        "skip": 0,
+        "order": "dateDesc",
+        "dateFrom": date_from,
+        "dateTo": date_to,
+    }
     # Запрос для отвеченных отзывов
-    answered_url = f"{WB_FEEDBACK_API_URL}?isAnswered=true&take=200&skip=0&order=dateDesc&dateFrom={date_from}&dateTo={date_to}"
-    answered_response = requests.get(answered_url, headers=HEADERS)
+    answered_response = requests.get(WB_FEEDBACK_API_URL, headers=HEADERS, params=answered_params)
     answered_feedbacks = answered_response.json().get("data", {}).get("feedbacks", [])
 
     # Небольшая задержка перед вторым запросом
     time.sleep(1)
-
+    unanswered_params = {
+        "isAnswered": "false",
+        "take": 200,
+        "skip": 0,
+        "order": "dateDesc",
+        "dateFrom": date_from,
+        "dateTo": date_to,
+    }
     # Запрос для неотвеченных отзывов
-    unanswered_url = f"{WB_FEEDBACK_API_URL}?isAnswered=false&take=200&skip=0&order=dateDesc&dateFrom={date_from}&dateTo={date_to}"
-    unanswered_response = requests.get(unanswered_url, headers=HEADERS)
+    unanswered_response = requests.get(WB_FEEDBACK_API_URL, headers=HEADERS, params=unanswered_params)
     unanswered_feedbacks = unanswered_response.json().get("data", {}).get("feedbacks", [])
 
     # Объединяем списки

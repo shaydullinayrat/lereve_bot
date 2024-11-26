@@ -4,6 +4,7 @@ from aiogram.fsm.context import FSMContext
 from aiogram.types import Message, CallbackQuery, ReplyKeyboardRemove
 from aiogram import Router, F
 
+from aiogram_bot.flows.bonuses.keyboards import empty_keyboard
 from aiogram_bot.flows.bonuses.state_forms import ClientPhoneForm
 from aiogram_bot.flows.bonuses.utils import show_bonus_list, show_bonus, participate_bonus, show_product_feedbacks, \
     register_feedback, register_bonus_request
@@ -46,5 +47,17 @@ async def view_register_feedback_callback(callback: CallbackQuery, state: FSMCon
 @bonus_router.message(ClientPhoneForm.phone)
 async def handle_phone(message: Message, state: FSMContext):
     phone = message.text
-    await state.update_data(phone=phone)
-    await register_bonus_request(message, state)
+    if message.contact:
+        phone = message.contact.phone_number  # Получаем номер из контакта
+        await state.update_data(phone=phone)
+        await register_bonus_request(message, state)
+        await state.clear()
+        # Отправляем сообщение с номером и убираем клавиатуру
+        await message.answer(f"Спасибо! Ваш номер телефона: {phone}", reply_markup=empty_keyboard)
+
+    else:
+        await message.answer("Пожалуйста, отправьте номер телефона с помощью кнопки.")
+
+
+
+

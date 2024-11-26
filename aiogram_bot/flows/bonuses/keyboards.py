@@ -1,6 +1,6 @@
 import json
 
-from aiogram.types import InlineKeyboardButton, InlineKeyboardMarkup
+from aiogram.types import InlineKeyboardButton, InlineKeyboardMarkup, ReplyKeyboardMarkup, KeyboardButton
 from asgiref.sync import sync_to_async
 
 from aiogram_bot.keyboards import generate_linear_keyboard
@@ -67,17 +67,27 @@ def get_all_active_products_keyboard(bonus_id):
 
     return generate_linear_keyboard(buttons_data)
 
-    # buttons = []
-    # for product in all_active_products:
-    #     text = f'{product.shop.title}: {product.title} - {product.article} !'
-    #     data = json.dumps({"bonus_id": bonus_id, "article": product.article})
-    #
-    #     # callback_data = callback.new(bonus_id=bonus_id, param2="value2")
-    #     row = [
-    #         InlineKeyboardButton(
-    #             text=text, callback_data=f'product_feedbacks__{data}'
-    #         )
-    #     ]
-    #     buttons.append(row)
-    #
-    # return InlineKeyboardMarkup(inline_keyboard=buttons)
+
+numeric_keyboard = ReplyKeyboardMarkup(
+    keyboard=[
+        [KeyboardButton(text="1"), KeyboardButton(text="2"), KeyboardButton(text="3")],
+        [KeyboardButton(text="4"), KeyboardButton(text="5"), KeyboardButton(text="6")],
+        [KeyboardButton(text="7"), KeyboardButton(text="8"), KeyboardButton(text="9")],
+        [KeyboardButton(text="0")],
+        [KeyboardButton(text="Отправить номер телефона", request_contact=True)]
+    ],
+    resize_keyboard=True
+)
+
+send_phone_keyboard = ReplyKeyboardMarkup(
+    keyboard=[
+        [KeyboardButton(text="📱 Отправить номер телефона 📱", request_contact=True)]
+    ],
+    resize_keyboard=True
+)
+
+# Стандартная клавиатура (или можно оставить пустую)
+empty_keyboard = ReplyKeyboardMarkup(
+    keyboard=[],  # Пустая клавиатура
+    resize_keyboard=True
+)
