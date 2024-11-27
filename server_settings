@@ -251,3 +251,17 @@ sudo supervisorctl restart flower
 
 
 
+На локалке:
+brew services list
+brew services start postgresql@14
+createuser lereve_user
+createdb lereve_db -Olereve_user
+psql -U lereve_user -d lereve_db
+
+redis-server
+
+celery -A core worker --loglevel=info
+
+celery -A core beat --loglevel=info
+
+celery -A core status

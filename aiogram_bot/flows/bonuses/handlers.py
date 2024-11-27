@@ -53,7 +53,7 @@ async def handle_phone(message: Message, state: FSMContext):
         await register_bonus_request(message, state)
         await state.clear()
         # Отправляем сообщение с номером и убираем клавиатуру
-        await message.answer(f"Спасибо! Ваш номер телефона: {phone}", reply_markup=empty_keyboard)
+
 
     else:
         await message.answer("Пожалуйста, отправьте номер телефона с помощью кнопки.")

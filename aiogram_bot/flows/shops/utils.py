@@ -28,7 +28,7 @@ def get_all_shop_data():
                 photo_path = shop.photo.path  # Получаем путь к файлу
                 shop_photo = FSInputFile(photo_path)
 
-            text, photo = f"<b>{shop.title}</b>\n{shop.description}", shop_photo
+            text, photo = f"<b>{shop.title}</b>\n\n{shop.description}", shop_photo
             if k == shops_count:
                 is_last = True
 

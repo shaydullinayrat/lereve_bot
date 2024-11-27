@@ -33,7 +33,8 @@ async def set_default_commands(bot: Bot):
     commands = [
         BotCommand(command="start", description="Главное меню"),
         # BotCommand(command="bonus", description="Получить бонус"),
-        # BotCommand(command="shops", description="Наши магазины"),
+        # BotCommand(command="shops", description="
+        # Наши магазины"),
         # BotCommand(command="care_service", description="Служба заботы"),
         # BotCommand(command="instructions", description="Как пользоваться"),
     ]

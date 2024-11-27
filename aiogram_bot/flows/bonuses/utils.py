@@ -9,11 +9,12 @@ from dateutil.parser import isoparse
 
 from aiogram_bot.bot import bot
 
-from aiogram_bot.flows.bonuses.keyboards import bonuses_keyboard, get_all_active_products_keyboard, numeric_keyboard, \
+from aiogram_bot.flows.bonuses.keyboards import bonuses_keyboard, get_all_active_products_keyboard, \
     send_phone_keyboard
 from aiogram_bot.flows.bonuses.state_forms import ClientPhoneForm
 from aiogram_bot.flows.bonuses.texts import no_active_bonus_text, my_feedback_not_exists, \
-    no_feedback_for_product_in_hour
+    no_feedback_for_product_in_hour, bonus_used_warn_text, no_active_bonus_text_2, choose_feedback_text, \
+    feedback_user_warn_text, send_your_phone_number_text, bonus_request_registered_text, error_text
 from aiogram_bot.flows.main_menu.keyboards import start_keyboard, back_to_main_menu_keyboard
 from aiogram_bot.keyboards import generate_keyboard
 
@@ -22,7 +23,7 @@ from aiogram_bot.utils import send_callback_aiogram_message, format_date_iso_to_
 from apps.bonuses.models import Bonus, BonusRequest, Feedback
 from apps.clients.models import Client
 from apps.shops.models import Product
-from core.settings import TELEGRAM_MANAGER_ID, TELEGRAM_MANAGER_USERNAME, FEEDBACK_REVIEW_DATE_CHECK_DAYS
+from core.settings import TELEGRAM_MANAGER_ID, TELEGRAM_MANAGER_USERNAME, FEEDBACK_REVIEW_DATE_CHECK_DAYS, DEBUG
 
 
 @sync_to_async
@@ -83,7 +84,7 @@ async def show_bonus(callback, bonus_id, back_button='start'):
 
             if client_bonus_requests_count > 0:
                 await callback.message.answer(
-                    text=f'<b>Вы уже воспользовались данной бонусной программой </b>. \n\nПовторно в ней участовать можно будет через <b> {FEEDBACK_REVIEW_DATE_CHECK_DAYS} дней</b> после первого участия',
+                    text=bonus_used_warn_text.format(FEEDBACK_REVIEW_DATE_CHECK_DAYS),
                     reply_markup=start_keyboard()
                 )
             else:
@@ -110,7 +111,7 @@ async def show_bonus(callback, bonus_id, back_button='start'):
 
     except:
         await send_callback_aiogram_message(callback=callback,
-                                            text='К сожалению нет активных бонусов',
+                                            text=no_active_bonus_text_2,
                                             keyboard=back_to_main_menu_keyboard())
 
 
@@ -126,12 +127,21 @@ async def show_product_feedbacks(callback, state, data):
     wb_feedback_id_list = await sync_to_async(lambda: list(Feedback.objects.values_list('wb_feedback_id', flat=True)))()
 
     # Фильтрация списка
-    filtered_feedbacks = [item for item in wb_feedbacks if
+
+    if DEBUG:
+        filtered_feedbacks = [item for item in wb_feedbacks if
                           item['article'] == article
                           and item['product_valuation'] == 5
                           and item['wb_feedback_id'] not in wb_feedback_id_list
-                          and item['text'].lower().startswith("супер")
+                          # and item['text'].lower().startswith("супер")
                           ]
+    else:
+        filtered_feedbacks = [item for item in wb_feedbacks if
+                              item['article'] == article
+                              and item['product_valuation'] == 5
+                              and item['wb_feedback_id'] not in wb_feedback_id_list
+                              and item['text'].lower().startswith("супер")
+                              ]
 
     if filtered_feedbacks:
         # review_date
@@ -193,7 +203,7 @@ async def participate_bonus(callback, state, bonus_id):
 
         keyboard = await get_all_active_products_keyboard(bonus_id)
         sent_message = await callback.message.answer(
-            text='Благодарим за высокую оценку нашего товара! \n\nВыберите тот <b>продукт</b>, который вы приобрели. \n\nДалее <b>выберите Ваш отзыв</b>, который вы оставили на данный продукт:',
+            text=choose_feedback_text,
             reply_markup=keyboard
         )
         data = await state.get_data()
@@ -205,7 +215,7 @@ async def participate_bonus(callback, state, bonus_id):
     except:
         await send_callback_aiogram_message(
             callback=callback,
-            text='К сожалению нет активных бонусов',
+            text=no_active_bonus_text_2,
             keyboard=back_to_main_menu_keyboard()
         )
 
@@ -272,13 +282,12 @@ async def register_feedback(callback, state, data):
 
         print('result ', result)
         await callback.message.answer(
-            text='К сожалению, этот отзыв уже использован для бонусной программы',
+            text=feedback_user_warn_text,
             reply_markup=back_to_main_menu_keyboard()
         )
     elif result == 'same_client_feedback_exists':
         await callback.message.answer(
-            text=f'<b>Вы уже воспользовались бонусной программой. </b>\n\n'
-                 f'Повторно участвовать можно будет только <b> через {FEEDBACK_REVIEW_DATE_CHECK_DAYS} дней </b>',
+            text=bonus_used_warn_text.format(FEEDBACK_REVIEW_DATE_CHECK_DAYS),
             reply_markup=back_to_main_menu_keyboard()
         )
     elif result.startswith('feedbacks_can_register'):
@@ -289,8 +298,8 @@ async def register_feedback(callback, state, data):
 
 
         await callback.message.answer(
-            "Поздравляем! Остался последний шаг. \n\nОтправьте пожалуйста свой <b>номер телефона </b>, на который вы бы хотели <b>получить бонус</b>, нажав на кнопку \n\n                        <b> НИЖЕ ↓↓↓ </b>",
-        reply_markup=send_phone_keyboard)
+            text=send_your_phone_number_text,
+            reply_markup=send_phone_keyboard)
         await state.set_state(ClientPhoneForm.phone)
 
 
@@ -343,10 +352,10 @@ async def register_bonus_request(message, state):
 
         await send_message_aiogram_message(
             message,
-            'Поздравляем! Ваша заявка зарегистрирована. \n\nВ ближайшее время с вами свяжется наш администратор для перечисления денег',
+            bonus_request_registered_text.format(data.get('phone')),
             start_keyboard()
         )
     else:
         await send_message_aiogram_message(
-            message, 'Произошла ошибка. Попробуйте сначала', start_keyboard()
+            message, error_text, start_keyboard()
         )
