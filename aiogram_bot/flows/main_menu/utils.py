@@ -7,7 +7,6 @@ from aiogram_bot.utils import get_client_name
 from apps.clients.models import Client
 
 
-
 async def send_welcome_message(message):
     await message.reply_photo(
         photo=get_welcome_photo(),
