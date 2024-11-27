@@ -18,7 +18,7 @@ def get_welcome_text(message):
     return welcome_text.format(client_name)
 
 def get_welcome_photo():
-    photo = FSInputFile("staticfiles/main_photo.jpeg")
+    photo = FSInputFile("staticfiles/main_menu_photo.jpeg")
     return photo
 
 
