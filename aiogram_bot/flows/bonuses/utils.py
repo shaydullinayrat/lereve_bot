@@ -193,7 +193,7 @@ async def participate_bonus(callback, state, bonus_id):
 
         keyboard = await get_all_active_products_keyboard(bonus_id)
         sent_message = await callback.message.answer(
-            text='Выберите тот <b>продукт</b>, который вы покупали. \n\nДалее <b>выберите Ваш отзыв</b>, который вы оставили на данный продукт:',
+            text='<b>Благодарим за высокую оценку нашего товара!</b> \nВыберите тот <b>продукт</b>, который вы приобрели. \n\nДалее <b>выберите Ваш отзыв</b>, который вы оставили на данный продукт:',
             reply_markup=keyboard
         )
         data = await state.get_data()
