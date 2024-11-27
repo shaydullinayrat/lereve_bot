@@ -103,6 +103,7 @@ GUNICORN
 pip install gunicorn
 sudo apt install nano -y
 sudo nano /etc/systemd/system/gunicorn.socket
+
 [Unit]
 Description=gunicorn socket
 
@@ -124,7 +125,7 @@ After=network.target
 User=www-data
 Group=www-data
 WorkingDirectory=/webapps/lereve_bot
-ExecStart=/webapps/lereve_bot/bin/gunicorn \
+ExecStart=/webapps/lereve_bot/venv/bin/gunicorn \
           --access-logfile - \
           --workers 3 \
           --bind unix:/run/gunicorn.sock \
@@ -132,6 +133,8 @@ ExecStart=/webapps/lereve_bot/bin/gunicorn \
 
 [Install]
 WantedBy=multi-user.target
+
+
 
 sudo systemctl start gunicorn.socket
 sudo systemctl enable gunicorn.socket
@@ -205,4 +208,79 @@ ls -ld /webapps/lereve_bot/media
 sudo chown -R www-data:www-data /webapps/lereve_bot/media
 sudo chmod -R 755 /webapps/lereve_bot/media
 
+
+
+
+Telegram-bot:
+sudo nano /etc/systemd/system/lereve-bot.service
+
+[Unit]
+Description=Lereve Telegram Bot
+After=network.target
+
+[Service]
+User=www-data
+WorkingDirectory=/webapps/lereve_bot
+ExecStart=/webapps/lereve_bot/venv/bin/python3 manage.py runbot
+Restart=always
+
+[Install]
+WantedBy=multi-user.target
+
+
+
+
+Celery:
+sudo nano /etc/systemd/system/celery.service
+
+[Unit]
+Description=Celery service for lereve
+Requires=gunicorn.socket
+After=network.target
+
+[Service]
+Type=forking
+User=www-data
+Group=www-data
+WorkingDirectory=/webapps/lereve_bot
+ExecStart=/webapps/lereve_bot/venv/bin/celery -A core worker --loglevel=info
+
+[Install]
+WantedBy=multi-user.target
+
+
+celery-beat
+
+sudo nano /etc/systemd/system/celery-beat.service
+[Unit]
+Description=Celery Beat service for lereve
+After=network.target
+
+[Service]
+Type=simple
+User=www-data
+Group=www-data
+WorkingDirectory=/webapps/lereve_bot
+ExecStart=/webapps/lereve_bot/venv/bin/celery -A core beat --loglevel=info
+
+[Install]
+WantedBy=multi-user.target
+
+gunicorn
+Description=gunicorn daemon
+Requires=gunicorn.socket
+After=network.target
+
+[Service]
+User=www-data
+Group=www-data
+WorkingDirectory=/webapps/lereve_bot
+ExecStart=/webapps/lereve_bot/venv/bin/gunicorn \
+          --access-logfile - \
+          --workers 3 \
+          --bind unix:/run/gunicorn.sock \
+          core.wsgi:application
+
+[Install]
+WantedBy=multi-user.target
 
