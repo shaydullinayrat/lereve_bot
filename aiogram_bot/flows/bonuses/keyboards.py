@@ -54,7 +54,7 @@ def get_all_active_products_keyboard(bonus_id):
     buttons_data = []
     # callback_data = callback.new(param1="value1", param2="value2")
     for product in all_active_products:
-        text = f'{product.shop.title}: {product.title} - {product.article}'
+        text = f'{product.title} - {product.article}'
         # data = json.dumps({"bonus_id": bonus_id, "article": product.article})
 
         data = f'bonus_id:{bonus_id}|article:{product.article}'
