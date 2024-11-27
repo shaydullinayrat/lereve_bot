@@ -6,9 +6,6 @@ from aiogram_bot.flows.instructions.utils import show_instruction_list, show_ins
 
 instruction_router = Router()
 
-# @instruction_router.message(Command("instructions"))
-# async def instructions_message(message: Message, state: FSMContext):
-#     await show_instruction_list_message(message, state)
 @instruction_router.callback_query(F.data == "instructions")
 async def instructions_callback(callback: CallbackQuery, state: FSMContext):
     await show_instruction_list(callback, state)

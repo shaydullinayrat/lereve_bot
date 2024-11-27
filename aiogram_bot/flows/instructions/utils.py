@@ -1,10 +1,9 @@
 from aiogram.types import FSInputFile
 from asgiref.sync import sync_to_async
 from aiogram_bot.flows.instructions.keyboards import instructions_keyboard, subinstruction_keyboard
-from aiogram_bot.flows.instructions.texts import no_active_instructions_text
+from aiogram_bot.flows.instructions.texts import no_active_instructions_text, instruction_not_active
 from aiogram_bot.flows.main_menu.keyboards import start_keyboard
-from aiogram_bot.flows.main_menu.texts import welcome_text
-from aiogram_bot.flows.main_menu.utils import get_welcome_text, send_welcome_message
+from aiogram_bot.flows.main_menu.utils import  send_welcome_message
 from aiogram_bot.utils import send_callback_aiogram_message, send_message_aiogram_message
 from apps.instructions.models import Instruction, SubInstruction
 
@@ -158,5 +157,5 @@ async def show_instruction(callback, instruction_id):
             )
     else:
         await send_message_aiogram_message(
-            callback.message, 'К сожалению данная инструкция неактуальна', start_keyboard()
+            callback.message, instruction_not_active, start_keyboard()
         )

@@ -55,7 +55,6 @@ def format_date_iso_to_russian(date_str):
     try:
         # Устанавливаем локаль для отображения месяца на русском языке
         locale.setlocale(locale.LC_TIME, 'ru_RU.UTF-8')
-        print('date_str ', date_str)
         # Парсим строку в объект datetime
         if date_str.endswith("Z"):  # Обработка UTC формата с "Z"
             parsed_date = datetime.strptime(date_str, "%Y-%m-%dT%H:%M:%SZ")

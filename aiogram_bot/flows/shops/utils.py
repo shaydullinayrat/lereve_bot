@@ -1,16 +1,10 @@
 from aiogram.types import FSInputFile
 from asgiref.sync import sync_to_async
-from aiogram.types import InlineKeyboardButton, InlineKeyboardMarkup
-from aiogram_bot.flows.main_menu.keyboards import back_to_main_menu_keyboard, start_keyboard
-from aiogram_bot.flows.main_menu.texts import back_to_main_menu_text
+from aiogram_bot.flows.main_menu.keyboards import start_keyboard
 from aiogram_bot.flows.shops.keyboards import generate_shop_button
 from aiogram_bot.flows.shops.texts import no_active_shops_text
-from aiogram_bot.keyboards import generate_linear_keyboard
-from aiogram_bot.utils import send_callback_aiogram_message, send_message_aiogram_message
+from aiogram_bot.utils import send_callback_aiogram_message
 from apps.shops.models import Shop
-
-
-
 
 
 @sync_to_async
@@ -73,4 +67,3 @@ async def show_shop_list(callback, state):
         #     text=back_to_main_menu_text,
         #     reply_markup=back_to_main_menu_keyboard()
         # )
-

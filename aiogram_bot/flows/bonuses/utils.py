@@ -3,7 +3,7 @@ import time
 from datetime import datetime, timedelta
 
 from aiogram.fsm.context import FSMContext
-from aiogram.types import FSInputFile, Message, ReplyKeyboardMarkup, KeyboardButton
+from aiogram.types import FSInputFile, Message
 from asgiref.sync import sync_to_async
 from dateutil.parser import isoparse
 
@@ -14,7 +14,8 @@ from aiogram_bot.flows.bonuses.keyboards import bonuses_keyboard, get_all_active
 from aiogram_bot.flows.bonuses.state_forms import ClientPhoneForm
 from aiogram_bot.flows.bonuses.texts import no_active_bonus_text, my_feedback_not_exists, \
     no_feedback_for_product_in_hour, bonus_used_warn_text, no_active_bonus_text_2, choose_feedback_text, \
-    feedback_user_warn_text, send_your_phone_number_text, bonus_request_registered_text, error_text
+    feedback_user_warn_text, send_your_phone_number_text, bonus_request_registered_text, error_text, \
+    user_wants_participate_bonus_text
 from aiogram_bot.flows.main_menu.keyboards import start_keyboard, back_to_main_menu_keyboard
 from aiogram_bot.keyboards import generate_keyboard
 
@@ -130,11 +131,11 @@ async def show_product_feedbacks(callback, state, data):
 
     if DEBUG:
         filtered_feedbacks = [item for item in wb_feedbacks if
-                          item['article'] == article
-                          and item['product_valuation'] == 5
-                          and item['wb_feedback_id'] not in wb_feedback_id_list
-                          # and item['text'].lower().startswith("супер")
-                          ]
+                              item['article'] == article
+                              and item['product_valuation'] == 5
+                              and item['wb_feedback_id'] not in wb_feedback_id_list
+                              # and item['text'].lower().startswith("супер")
+                              ]
     else:
         filtered_feedbacks = [item for item in wb_feedbacks if
                               item['article'] == article
@@ -261,7 +262,6 @@ async def delete_previous_messages(message: Message, state: FSMContext):
 
 
 async def register_feedback(callback, state, data):
-
     data = data.split('|')
     bonus_id = int(data[0].split(':')[1])
     article = int(data[1].split(':')[1])
@@ -293,9 +293,6 @@ async def register_feedback(callback, state, data):
     elif result.startswith('feedbacks_can_register'):
 
         # Клавиатура с запросом телефона
-
-
-
 
         await callback.message.answer(
             text=send_your_phone_number_text,
@@ -344,11 +341,9 @@ async def register_bonus_request(message, state):
     bonus_title = await create_bonus_request(message, data)
     if bonus_title:
         manager_chat_id = TELEGRAM_MANAGER_ID  # Укажите реальный chat_id менеджера
-        manager_username = TELEGRAM_MANAGER_USERNAME  # Укажите реальный chat_id менеджера
-        user_info = f"Пользователь: @{message.from_user.username} (ID: {message.from_user.id})"
-
-        await bot.send_message(manager_chat_id,
-                               f"{user_info} хочет учавствовать в бонусной программе: {bonus_title}, телефон: {data.get('phone')}")
+        text = user_wants_participate_bonus_text.format(message.from_user.username, message.from_user.id, bonus_title,
+                                                        data.get('phone'))
+        await bot.send_message(manager_chat_id, text)
 
         await send_message_aiogram_message(
             message,

@@ -1,18 +1,14 @@
 from aiogram.enums import ContentType
 from aiogram.fsm.context import FSMContext
 
-from aiogram.types import Message, CallbackQuery, ReplyKeyboardRemove
+from aiogram.types import Message, CallbackQuery
 from aiogram import Router, F
 
-from aiogram_bot.flows.bonuses.keyboards import empty_keyboard
 from aiogram_bot.flows.bonuses.state_forms import ClientPhoneForm
 from aiogram_bot.flows.bonuses.utils import show_bonus_list, show_bonus, participate_bonus, show_product_feedbacks, \
     register_feedback, register_bonus_request
 
 bonus_router = Router()
-
-
-# Определяем состояния
 
 
 @bonus_router.callback_query(F.data == "bonus")
@@ -57,7 +53,3 @@ async def handle_phone(message: Message, state: FSMContext):
 
     else:
         await message.answer("Пожалуйста, отправьте номер телефона с помощью кнопки.")
-
-
-
-
