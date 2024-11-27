@@ -182,105 +182,72 @@ sudo nginx -t
 sudo systemctl restart nginx
 
 
-SUPERVISOR
-sudo nano /etc/supervisor/conf.d/gunicorn.conf
-
-[program:lereve]
-command=/webapps/lereve_bot/venv/bin/gunicorn --workers 3 --bind unix:/run/gunicorn.sock core.wsgi:application
-directory=/webapps/lereve_bot
-user=www-data
-autostart=true
-autorestart=true
-stderr_logfile=/var/log/gunicorn.err.log
-stdout_logfile=/var/log/gunicorn.out.log
-
-
-sudo supervisorctl reread
-sudo supervisorctl update
-sudo supervisorctl restart lereve
-
-
-
-
-
 ls -ld /webapps/lereve_bot/media
 
 sudo chown -R www-data:www-data /webapps/lereve_bot/media
 sudo chmod -R 755 /webapps/lereve_bot/media
 
 
+CELERY
+sudo nano /etc/supervisor/conf.d/celery.conf
+
+[program:celery]
+command=/webapps/lereve_bot/venv/bin/celery -A core worker --loglevel=info
+directory=/webapps/lereve_bot
+user=www-data
+autostart=true
+autorestart=true
+stderr_logfile=/webapps/lereve_bot/logs/celery.err.log
+stdout_logfile=/webapps/lereve_bot/logs/celery.out.log
 
 
-Telegram-bot:
-sudo nano /etc/systemd/system/lereve-bot.service
+CELERY-BEAT
+sudo nano /etc/supervisor/conf.d/celery-beat.conf
 
-[Unit]
-Description=Lereve Telegram Bot
-After=network.target
-
-[Service]
-User=www-data
-WorkingDirectory=/webapps/lereve_bot
-ExecStart=/webapps/lereve_bot/venv/bin/python3 manage.py runbot
-Restart=always
-
-[Install]
-WantedBy=multi-user.target
+[program:celery-beat]
+command=/webapps/lereve_bot/venv/bin/celery -A core beat --loglevel=info --scheduler django_celery_beat.schedulers:DatabaseScheduler
+directory=/webapps/lereve_bot
+user=www-data
+autostart=true
+autorestart=true
+stderr_logfile=/webapps/lereve_bot/logs/celery-beat.err.log
+stdout_logfile=/webapps/lereve_bot/logs/celery-beat.out.log
 
 
+TELEGRA-BOT
+sudo nano /etc/supervisor/conf.d/lereve-bot.conf
+
+[program:lereve-bot]
+command=/webapps/lereve_bot/venv/bin/python manage.py runbot
+directory=/webapps/lereve_bot
+user=www-data
+autostart=true
+autorestart=true
+stderr_logfile=/webapps/lereve_bot/logs/lereve-bot.err.log
+stdout_logfile=/webapps/lereve_bot/logs/lereve-bot.out.log
 
 
-Celery:
-sudo nano /etc/systemd/system/celery.service
-
-[Unit]
-Description=Celery service for lereve
-Requires=gunicorn.socket
-After=network.target
-
-[Service]
-Type=forking
-User=www-data
-Group=www-data
-WorkingDirectory=/webapps/lereve_bot
-ExecStart=/webapps/lereve_bot/venv/bin/celery -A core worker --loglevel=info
-
-[Install]
-WantedBy=multi-user.target
+FLOWER:
+sudo nano /etc/supervisor/conf.d/flower.conf
+[program:flower]
+command=/webapps/lereve_bot/venv/bin/celery -A core flower --port=5555
+directory=/webapps/lereve_bot
+user=www-data
+autostart=true
+autorestart=true
+stderr_logfile=/webapps/lereve_bot/logs/flower.err.log
+stdout_logfile=/webapps/lereve_bot/logs/flower.out.log
 
 
-celery-beat
+sudo mkdir -p /webapps/lereve_bot/logs
+sudo chown -R www-data:www-data /webapps/lereve_bot/logs
 
-sudo nano /etc/systemd/system/celery-beat.service
-[Unit]
-Description=Celery Beat service for lereve
-After=network.target
+sudo supervisorctl reread
+sudo supervisorctl update
+sudo supervisorctl restart flower
 
-[Service]
-Type=simple
-User=www-data
-Group=www-data
-WorkingDirectory=/webapps/lereve_bot
-ExecStart=/webapps/lereve_bot/venv/bin/celery -A core beat --loglevel=info
 
-[Install]
-WantedBy=multi-user.target
 
-gunicorn
-Description=gunicorn daemon
-Requires=gunicorn.socket
-After=network.target
 
-[Service]
-User=www-data
-Group=www-data
-WorkingDirectory=/webapps/lereve_bot
-ExecStart=/webapps/lereve_bot/venv/bin/gunicorn \
-          --access-logfile - \
-          --workers 3 \
-          --bind unix:/run/gunicorn.sock \
-          core.wsgi:application
 
-[Install]
-WantedBy=multi-user.target
 

@@ -30,8 +30,8 @@ def fetch_feedbacks():
     from_datetime_unix_timestamp = int(time.mktime(from_datetime.timetuple()))
     to_datetime_unix_timestamp = int(time.mktime(to_datetime.timetuple()))
 
-    date_from = from_datetime_unix_timestamp
-    date_to = to_datetime_unix_timestamp
+    # date_from = from_datetime_unix_timestamp
+    # date_to = to_datetime_unix_timestamp
 
     answered_params = {
         "isAnswered": "true",
