@@ -35,7 +35,7 @@ def all_active_products_keyboard():
     buttons_data = []
     # callback_data = callback.new(param1="value1", param2="value2")
     for product in all_active_products:
-        text = f'{product.shop.title}: {product.title} - {product.article}'
+        text = f'{product.title} - {product.article}'
         buttons_data.append(
             (text, f"bonus_product_{product.id}")
         )
