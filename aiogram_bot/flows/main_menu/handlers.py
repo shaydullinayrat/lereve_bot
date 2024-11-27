@@ -1,5 +1,5 @@
 from aiogram.fsm.context import FSMContext
-from aiogram.types import Message, CallbackQuery
+from aiogram.types import Message, CallbackQuery, FSInputFile
 from aiogram import Router, F
 from aiogram.filters import Command
 
@@ -19,10 +19,19 @@ async def start_cmd(message: Message, state: FSMContext):
     user_data = message.from_user
     await save_user_data(user_data)
     # await message.answer(text='Hello', reply_markup=main_menu_keyboard())
+    photo = FSInputFile("staticfiles/main_photo.jpeg")
 
-    await send_message_aiogram_message(
-        message, get_welcome_text(message), start_keyboard()
+    # Отправка сообщения с фото через message
+    await message.reply_photo(
+        photo=photo,
+        caption=get_welcome_text(message),
+        reply_markup=start_keyboard()
     )
+
+
+    # await send_message_aiogram_message(
+    #     message, get_welcome_text(message), start_keyboard()
+    # )
 
 
 
