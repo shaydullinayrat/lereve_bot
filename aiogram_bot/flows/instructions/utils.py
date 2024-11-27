@@ -4,7 +4,7 @@ from aiogram_bot.flows.instructions.keyboards import instructions_keyboard, subi
 from aiogram_bot.flows.instructions.texts import no_active_instructions_text
 from aiogram_bot.flows.main_menu.keyboards import start_keyboard
 from aiogram_bot.flows.main_menu.texts import welcome_text
-from aiogram_bot.flows.main_menu.utils import get_welcome_text
+from aiogram_bot.flows.main_menu.utils import get_welcome_text, send_welcome_message
 from aiogram_bot.utils import send_callback_aiogram_message, send_message_aiogram_message
 from apps.instructions.models import Instruction, SubInstruction
 
@@ -124,9 +124,10 @@ async def show_subinstruction(callback, subinstruction_id):
                 reply_markup=keyboard
             )
     else:
-        await send_message_aiogram_message(
-            callback.message, get_welcome_text(callback.message), start_keyboard()
-        )
+        await send_welcome_message(callback.message)
+        # await send_message_aiogram_message(
+        #     callback.message, get_welcome_text(callback.message), start_keyboard()
+        # )
 
 
 async def show_instruction(callback, instruction_id):

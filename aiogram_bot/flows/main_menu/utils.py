@@ -1,14 +1,26 @@
+from aiogram.types import FSInputFile
 from asgiref.sync import sync_to_async
 
+from aiogram_bot.flows.main_menu.keyboards import start_keyboard
 from aiogram_bot.flows.main_menu.texts import welcome_text
 from aiogram_bot.utils import get_client_name
 from apps.clients.models import Client
 
 
+
+async def send_welcome_message(message):
+    await message.reply_photo(
+        photo=get_welcome_photo(),
+        caption=get_welcome_text(message),
+        reply_markup=start_keyboard()
+    )
 def get_welcome_text(message):
     client_name = get_client_name(message)
     return welcome_text.format(client_name)
 
+def get_welcome_photo():
+    photo = FSInputFile("staticfiles/main_photo.jpeg")
+    return photo
 
 
 @sync_to_async

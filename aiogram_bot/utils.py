@@ -4,9 +4,9 @@ from aiogram.types import Message
 
 def get_client_name(message):
     first_name = message.from_user.first_name
-    last_name = message.from_user.last_name
+    # last_name = message.from_user.last_name
     client_name = 'Дорогой клиент'
-    if first_name:
+    if first_name and first_name != 'Le Reve bot':
         client_name = f'{first_name}'
     return client_name
 
