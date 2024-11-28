@@ -22,7 +22,7 @@ def start_keyboard():
                 InlineKeyboardButton(text="Наш магазин", url="https://www.wildberries.ru/brands/le-reve/duhi"),
             ],
             [
-                InlineKeyboardButton(text="Служба заботы", callback_data="care_service"),
+                InlineKeyboardButton(text="Служба заботы", url="https://t.me/rishat_1988"),
                 InlineKeyboardButton(text="Как пользоваться", callback_data="instructions"),
             ],
         ]
