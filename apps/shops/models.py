@@ -27,11 +27,13 @@ class Product(models.Model):
     title = models.CharField(max_length=255, verbose_name="Название продукта")
     is_active = models.BooleanField(default=True, verbose_name="Активен ли продукт")
     description = models.TextField(null=True, blank=True, verbose_name="Описание продукта")
+    order = models.IntegerField(default=0)
 
     def __str__(self):
         return self.title
 
     class Meta:
+        ordering = ['order']
         verbose_name = "Продукт"
         verbose_name_plural = "Продукты"
 
