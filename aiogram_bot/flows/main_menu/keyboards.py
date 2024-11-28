@@ -19,11 +19,12 @@ def start_keyboard():
         inline_keyboard=[
             [
                 InlineKeyboardButton(text="Получить бонус", callback_data="bonus"),
-                InlineKeyboardButton(text="Наш магазин", url="https://www.wildberries.ru/brands/le-reve/duhi"),
+                InlineKeyboardButton(text="Как пользоваться", callback_data="instructions"),
+
             ],
             [
                 InlineKeyboardButton(text="Служба заботы", url="https://t.me/rishat_1988"),
-                InlineKeyboardButton(text="Как пользоваться", callback_data="instructions"),
+                InlineKeyboardButton(text="Наш магазин", url="https://www.wildberries.ru/brands/le-reve/duhi"),
             ],
         ]
     )
