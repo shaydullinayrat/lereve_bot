@@ -8,23 +8,22 @@ from apps.clients.models import Client
 
 
 async def send_welcome_message(message):
-    await message.reply_photo(
-        photo=get_welcome_photo(),
-        caption=get_welcome_text(message),
-        reply_markup=start_keyboard()
-    )
-    # try:
-    #     await message.edit_text(
-    #         photo=get_welcome_photo(),
-    #         caption=get_welcome_text(message),
-    #         reply_markup=start_keyboard()
-    #     )
-    # except:
-    #     await message.reply_photo(
-    #         photo=get_welcome_photo(),
-    #         caption=get_welcome_text(message),
-    #         reply_markup=start_keyboard()
-    #     )
+    # await message.reply_photo(
+    #     photo=get_welcome_photo(),
+    #     caption=get_welcome_text(message),
+    #     reply_markup=start_keyboard()
+    # )
+    try:
+        await message.edit_text(
+            text=get_welcome_text(message),
+            reply_markup=start_keyboard()
+        )
+    except:
+        await message.reply_photo(
+            photo=get_welcome_photo(),
+            caption=get_welcome_text(message),
+            reply_markup=start_keyboard()
+        )
 def get_welcome_text(message):
     client_name = get_client_name(message)
     return welcome_text.format(client_name)
