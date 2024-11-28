@@ -89,7 +89,7 @@ async def show_bonus(callback, bonus_id, back_button='start'):
                     reply_markup=start_keyboard()
                 )
             else:
-                bonus_text = f'<b>{bonus.title}</b> \n{bonus.description}'
+                bonus_text = f'<b>{bonus.title}</b>\n{bonus.description}'
 
                 buttons_data = [
                     ("Назад", back_button),
