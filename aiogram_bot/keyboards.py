@@ -10,6 +10,7 @@ def generate_linear_keyboard(buttons_data):
             )
         ]
         buttons.append(row)
+
     return InlineKeyboardMarkup(inline_keyboard=buttons)
 
 
