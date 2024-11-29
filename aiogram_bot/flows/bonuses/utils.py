@@ -173,7 +173,7 @@ async def show_product_feedbacks(callback, state, data):
             await state.update_data(message_ids=message_ids)
 
         buttons_data = [
-            ("Назад", f"bonus_{bonus_id}"),
+            ("Отмена", f"bonus_{bonus_id}"),
         ]
         keyboard = generate_keyboard(buttons_data, [1])
 
@@ -187,7 +187,7 @@ async def show_product_feedbacks(callback, state, data):
 
     else:
         buttons_data = [
-            ("Назад", f"bonus_{bonus_id}"),
+            ("Отмена", f"bonus_{bonus_id}"),
         ]
 
         await send_callback_aiogram_message(
