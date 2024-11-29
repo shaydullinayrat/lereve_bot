@@ -16,7 +16,7 @@ def get_all_active_products_care_keyboard():
             (text, f"care_product__{product.id}")
         )
     buttons_data.append(
-        ('Назад', 'start')
+        ('Отмена', 'start')
     )
 
 
