@@ -92,7 +92,7 @@ async def show_bonus(callback, bonus_id, back_button='start'):
                 bonus_text = f'<b>{bonus.title}</b>\n{bonus.description}'
 
                 buttons_data = [
-                    ("Назад", back_button),
+                    ("Отмена", back_button),
                     ("Участвую!", f"participate_bonus__{bonus_id}"),
                 ]
                 keyboard = generate_keyboard(buttons_data, [2])
