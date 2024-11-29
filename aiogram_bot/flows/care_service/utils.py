@@ -74,7 +74,7 @@ async def send_message_to_care_service(callback, state, product_id):
         callback=callback,
         text=text,
         keyboard=generate_keyboard(button_data, [1]),
-        disable_web_page_preview=True
+        # disable_web_page_preview=True
 
     )
 
