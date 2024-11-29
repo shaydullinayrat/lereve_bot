@@ -57,28 +57,28 @@ async def send_message_to_care_service(callback, state, product_id):
     await callback.answer()
     product = await Product.objects.aget(id=product_id)
     care_service_id = TELEGRAM_CARE_SERVICE_ID  # Укажите реальный chat_id менеджера
-    care_service_username = TELEGRAM_CARE_SERVICE_USERNAME  # Укажите реальный chat_id менеджера
-    text = user_to_care_product_text.format(
-        callback.from_user.username, callback.from_user.id, product.title, product.article, product.url
-    )
-    # await state.set_state(SupportState.select_product)
     await state.update_data(product_id=product_id)
+    await state.update_data(product_article=product.article)
+    await state.update_data(product_url=product.url)
+    await state.update_data(product_title=product.title)
     await state.set_state(SupportState.describe_issue)
 
-    text = 'Вы покупали у нас продукт: <b>{}</b>. \nОпишите пожалуйста какие сложности у вас возникли с продуктом, вместе с  <b>описанием</b>, можете прикрепить <b> фотографию</b>'. \
-        format(product.title)
+    text = 'Вы покупали у нас продукт: <a href="{}">{} ({})</a>. \n\n<b>Опишите</b> пожалуйста какие сложности у вас возникли с продуктом, можете прикрепить <b> фото или видео</b>'. \
+        format(product.url, product.title, product.article)
 
     button_data = [
         ('Отмена', 'care_service')
     ]
+
     await send_callback_aiogram_message(
         callback=callback,
         text=text,
-        keyboard=generate_keyboard(button_data, [1])
+        keyboard=generate_keyboard(button_data, [1]),
+        disable_web_page_preview=True
 
     )
 
-    await main.bot.send_message(care_service_id, text)
+    # await main.bot.send_message(care_service_id, text)
     # text = manager_notified_text.format(care_service_username)
     # await send_callback_aiogram_message(
     #     callback=callback,
@@ -239,7 +239,12 @@ async def finish_request(callback, state):
         # Отправляем админу уведомление о новом запросе
         await bot.send_message(
             TELEGRAM_CARE_SERVICE_ID,
-            f"📩 Новый запрос на тех поддержку от клиента <b>{callback.from_user.full_name}</b> (ID: {client_id}). по продукту:",
+            text=user_to_care_product_text.format(callback.from_user.username,
+                                                  callback.from_user.id,
+                                                  data.get('product_url'),
+                                                  data.get('product_title'),
+                                                  data.get('product_article'),
+                                                  ),
         )
 
         # Пересылаем сообщения админу
@@ -250,12 +255,15 @@ async def finish_request(callback, state):
                 message_id=msg_id,
             )
 
-        await bot.send_message(
-            TELEGRAM_CARE_SERVICE_ID,
-            f"📩 Новый запрос на тех поддержку от клиента <b>{callback.from_user.full_name}</b> (ID: {client_id}). по продукту:",
-        )
-
-
+        # await bot.send_message(
+        #     TELEGRAM_CARE_SERVICE_ID,
+        #     text=user_to_care_product_text.format(callback.from_user.username,
+        #                                           callback.from_user.id,
+        #                                           data.get('product_url'),
+        #                                           data.get('product_title'),
+        #                                           data.get('product_article'),
+        #                                           ),
+        # )
 
         # Уведомляем пользователя
         # await send_callback_aiogram_message(
