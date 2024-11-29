@@ -39,7 +39,7 @@ def get_all_active_products_keyboard(bonus_id):
             (text, f"product_feedbacks__{data}")
         )
     buttons_data.append(
-        ('Назад', 'start')
+        ('Отмена', 'start')
     )
 
     return generate_linear_keyboard(buttons_data)
