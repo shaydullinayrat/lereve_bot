@@ -63,7 +63,3 @@ async def show_shop_list(callback, state):
                     caption=text,
                     reply_markup=keyboard
                 )
-        # await callback.message.answer(
-        #     text=back_to_main_menu_text,
-        #     reply_markup=back_to_main_menu_keyboard()
-        # )

@@ -350,11 +350,6 @@ async def register_bonus_request(message, state):
             caption=bonus_request_registered_text.format(data.get('phone')),
             reply_markup=start_keyboard()
         )
-        # await send_message_aiogram_message(
-        #     message,
-        #     bonus_request_registered_text.format(data.get('phone')),
-        #     start_keyboard()
-        # )
     else:
         await send_message_aiogram_message(
             message, error_text, start_keyboard()
