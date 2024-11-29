@@ -33,6 +33,7 @@ def get_welcome_photo():
     return photo
 
 
+
 @sync_to_async
 def save_user_data(user_data):
     user, created = Client.objects.get_or_create(

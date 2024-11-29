@@ -52,7 +52,6 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
-    'apps.bot',
     'apps.management',
     'apps.clients',
     'apps.instructions',
@@ -62,6 +61,7 @@ INSTALLED_APPS = [
     'django_celery_results',
     'aiogram_bot',
     'django.contrib.postgres',
+    'apps.care_requests',
 ]
 
 MIDDLEWARE = [
