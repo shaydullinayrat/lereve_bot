@@ -166,7 +166,7 @@ async def finish_request(callback, state):
     await callback.message.reply_photo(
         photo=FSInputFile("staticfiles/notified_manager_photo.jpeg"),
         caption=texts.care_service_connect_you_text,
-        reply_markup=start_keyboard()
+        reply_markup=back_to_main_menu_keyboard()
     )
 
     try:
