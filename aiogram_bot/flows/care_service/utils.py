@@ -43,7 +43,7 @@ async def show_care_service(callback, state):
 
     text = manager_notified_text.format(care_service_username)
 
-    text = "Пожалуйста, выберите продукт, который вы приобрели и по которому у вас возникли вопросы или проблемы."
+    text = "Пожалуйста, <b>выберите продукт</b>, который вы приобрели и по которому у вас возникли <b>вопросы или проблемы</b>."
 
     keyboard = await get_all_active_products_care_keyboard()
     await send_callback_aiogram_message(
