@@ -14,8 +14,9 @@ async def send_welcome_message(message):
             reply_markup=start_keyboard()
         )
     except:
+        photo = FSInputFile("staticfiles/main_menu_photo_2.jpeg")
         await message.reply_photo(
-            photo=get_welcome_photo(),
+            photo=photo,
             caption=get_welcome_text(message),
             reply_markup=start_keyboard()
         )
@@ -23,9 +24,6 @@ def get_welcome_text(message):
     client_name = get_client_name(message)
     return welcome_text.format(client_name)
 
-def get_welcome_photo():
-    photo = FSInputFile("staticfiles/main_menu_photo.jpeg")
-    return photo
 
 
 
