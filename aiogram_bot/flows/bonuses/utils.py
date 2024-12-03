@@ -153,10 +153,10 @@ async def show_product_feedbacks(callback, state, data):
             review_date = format_date_iso_to_russian(review_date)
             product_valuation = feedback.get('product_valuation')
             product_name = feedback.get('product_name')
-            text = feedback.get('text')
+            feedback_text = feedback.get('text')
             pros = feedback.get('pros')
 
-            text = f'<b>{wb_username}:</b> {product_valuation} ★ \n  {product_name} \n  {review_date} \n \n<i>{pros}</i> \n\n<i>{text}</i>'
+            text = f'<b>{wb_username}:</b> {product_valuation} ★ \n  {product_name} \n  {review_date} \n \n<i>{pros}</i> \n\n<i>{feedback_text}</i>'
             callback_data = f'reg_fb__bonus_id:{bonus_id}|article:{article}|fb_id:{wb_feedback_id}'
             buttons_data = [
                 ("Это мой отзыв!", callback_data),

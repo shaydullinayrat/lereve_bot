@@ -68,7 +68,7 @@ def fetch_feedbacks():
             "wb_username": feedback["userName"],
             "wb_feedback_id": feedback["id"],
             "text": feedback["text"],
-            "pros": feedback["text"],
+            "pros": feedback["pros"],
             "review_date": feedback["createdDate"],
             "product_name": feedback["productDetails"]["productName"],
             "brand_name": feedback["productDetails"]["brandName"],
