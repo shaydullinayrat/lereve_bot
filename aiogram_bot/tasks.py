@@ -28,9 +28,9 @@ def fetch_feedbacks():
 
     from_datetime_unix_timestamp = int(time.mktime(from_datetime.timetuple()))
     to_datetime_unix_timestamp = int(time.mktime(to_datetime.timetuple()))
-    if DEBUG:
-        date_from = from_datetime_unix_timestamp
-        date_to = to_datetime_unix_timestamp
+    # if DEBUG:
+    #     date_from = from_datetime_unix_timestamp
+    #     date_to = to_datetime_unix_timestamp
 
     answered_params = {
         "isAnswered": "true",
@@ -61,7 +61,6 @@ def fetch_feedbacks():
     # Объединяем списки
     all_feedbacks = answered_feedbacks + unanswered_feedbacks
 
-
     # Формируем наш список `our_feedbacks`
     our_feedbacks = [
         {
@@ -69,6 +68,7 @@ def fetch_feedbacks():
             "wb_username": feedback["userName"],
             "wb_feedback_id": feedback["id"],
             "text": feedback["text"],
+            "pros": feedback["text"],
             "review_date": feedback["createdDate"],
             "product_name": feedback["productDetails"]["productName"],
             "brand_name": feedback["productDetails"]["brandName"],

@@ -154,8 +154,9 @@ async def show_product_feedbacks(callback, state, data):
             product_valuation = feedback.get('product_valuation')
             product_name = feedback.get('product_name')
             text = feedback.get('text')
+            pros = feedback.get('pros')
 
-            text = f'<b>{wb_username}:</b> {product_valuation} ★ \n  {product_name} \n  {review_date} \n \n<i>{text}</i>'
+            text = f'<b>{wb_username}:</b> {product_valuation} ★ \n  {product_name} \n  {review_date} \n \n<i>{pros}</i> \n\n<i>{text}</i>'
             callback_data = f'reg_fb__bonus_id:{bonus_id}|article:{article}|fb_id:{wb_feedback_id}'
             buttons_data = [
                 ("Это мой отзыв!", callback_data),
@@ -280,7 +281,6 @@ async def register_feedback(callback, state, data):
 
     if result == 'same_feedback_exists':
 
-        print('result ', result)
         await callback.message.answer(
             text=feedback_user_warn_text,
             reply_markup=back_to_main_menu_keyboard()
@@ -322,14 +322,16 @@ def create_bonus_request(message, data):
         client.phone_number = phone
         client.wb_username = feedback_item['wb_username']
         client.save()
-
+        date = isoparse(feedback_item['review_date'])
+        # date = date + timedelta(hours=3)
         feedback = Feedback.objects.create(
             product=product,
             bonus_request=bonus_request,
             wb_feedback_id=feedback_item['wb_feedback_id'],
             wb_username=feedback_item['wb_username'],
             text=feedback_item['text'],
-            review_date=isoparse(feedback_item['review_date']),
+            pros=feedback_item['pros'],
+            review_date=date,
         )
 
         return bonus_request.bonus.title

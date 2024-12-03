@@ -63,7 +63,8 @@ class Feedback(models.Model):
     product = models.ForeignKey(Product, on_delete=models.CASCADE, verbose_name="Продукт")
     wb_username = models.CharField(max_length=255, verbose_name="Имя пользователя WB")
     wb_feedback_id = models.CharField(max_length=255, unique=True, verbose_name="ID отзыва WB")
-    text = models.TextField(verbose_name="Текст отзыва")
+    text = models.TextField(verbose_name="Впечатления", default=None, null=True, blank=True)
+    pros = models.TextField(verbose_name="Текст отзыва", default=None, null=True, blank=True)
     review_date = models.DateTimeField(verbose_name="Дата отзыва")
     bonus_request = models.OneToOneField(
         BonusRequest,
