@@ -40,7 +40,7 @@ async def set_default_commands(bot: Bot):
     await bot.set_my_commands(commands, scope=BotCommandScopeDefault())
 
 
-from datetime import datetime
+from datetime import datetime, timezone, timedelta
 import locale
 
 
@@ -56,7 +56,13 @@ def format_date_iso_to_russian(date_str):
         locale.setlocale(locale.LC_TIME, 'ru_RU.UTF-8')
         # Парсим строку в объект datetime
         if date_str.endswith("Z"):  # Обработка UTC формата с "Z"
+
             parsed_date = datetime.strptime(date_str, "%Y-%m-%dT%H:%M:%SZ")
+
+            local_timezone = timezone(timedelta(hours=3))  # Укажите нужный часовой пояс
+            parsed_date = parsed_date.replace(tzinfo=timezone.utc).astimezone(local_timezone)
+
+
         else:  # Обработка формата с таймзоной "+03:00"
             parsed_date = datetime.fromisoformat(date_str)
 
