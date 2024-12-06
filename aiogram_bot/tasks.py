@@ -73,6 +73,7 @@ def fetch_feedbacks():
             "product_name": feedback["productDetails"]["productName"],
             "brand_name": feedback["productDetails"]["brandName"],
             "product_valuation": feedback["productValuation"],
+            "is_able_supplier_feedback_valuation": feedback["isAbleSupplierFeedbackValuation"],
         }
         for feedback in all_feedbacks
     ]
