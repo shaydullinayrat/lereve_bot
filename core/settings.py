@@ -99,6 +99,7 @@ WSGI_APPLICATION = 'core.wsgi.application'
 # https://docs.djangoproject.com/en/4.2/ref/settings/#databases
 DB_NAME = env.str('DB_NAME')
 DB_USER = env.str('DB_USER')
+DB_PASSWORD = env.str('DB_PASSWORD')
 
 # DATABASES = {
 #     'default': {
@@ -113,9 +114,9 @@ DATABASES = {
         # 'ENGINE': 'django_postgres_async.backend',
         # 'HOST': os.environ.get('DB_HOST'),
         'HOST': 'localhost',
-        'USER': 'lereve_user',
-        'NAME': 'lereve_db',
-        'PASSWORD': 'MLl!8)co37Oo',
+        'USER': DB_USER,
+        'NAME': DB_NAME',
+        'PASSWORD': DB_PASSWORD,
         'PORT': '5432',
         # 'NAME': os.environ.get('DB_NAME'),
         # 'USER': os.environ.get('DB_USER'),
