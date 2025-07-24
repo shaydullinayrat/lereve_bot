@@ -168,7 +168,7 @@ MEDIA_URL = 'media/'
 
 # Относительный путь для хранения собранных статических файлов
 # STATIC_ROOT = os.path.join(BASE_DIR, 'static/')
-STATIC_ROOT = os.path.join(BASE_DIR, 'static_root/')
+STATIC_ROOT = os.path.join(BASE_DIR, 'static/')
 MEDIA_ROOT = os.path.join(BASE_DIR, 'media/')
 
 # Дополнительно: пользовательские директории со статическими файлами
