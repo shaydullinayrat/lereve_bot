@@ -159,6 +159,7 @@ USE_I18N = True
 
 USE_TZ = True
 
+
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/4.2/howto/static-files/
 
@@ -171,7 +172,7 @@ MEDIA_ROOT = '/webapps/lereve_bot/media/'
 
 # Дополнительно: пользовательские директории со статическими файлами (оставляем для разработки)
 STATICFILES_DIRS = [
-    os.path.join(BASE_DIR, 'static/'),
+    # os.path.join(BASE_DIR, 'static/'),
     # os.path.join(BASE_DIR, 'staticfiles/'),
 ]
 
