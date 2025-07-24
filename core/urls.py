@@ -17,9 +17,11 @@ Including another URLconf
 from django.contrib import admin
 from django.http import HttpResponse
 from django.urls import path
+from django.conf.urls.static import static
+from core import settings
 def hello_world(request):
     return HttpResponse("Hello, World!")
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('', hello_world, name='hello_world'),
-]
+] + static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)
