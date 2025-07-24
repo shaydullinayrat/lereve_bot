@@ -173,7 +173,7 @@ MEDIA_ROOT = os.path.join(BASE_DIR, 'media/')
 # Дополнительно: пользовательские директории со статическими файлами
 STATICFILES_DIRS = [
     # os.path.join(BASE_DIR, 'static_root/'), 
-    os.path.join(BASE_DIR, 'staticfiles/'),  # Например, директория для пользовательской статики
+    # os.path.join(BASE_DIR, 'staticfiles/'),  # Например, директория для пользовательской статики
 ]
 
 # Default primary key field type

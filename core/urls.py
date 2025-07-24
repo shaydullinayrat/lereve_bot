@@ -24,4 +24,5 @@ def hello_world(request):
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('', hello_world, name='hello_world'),
-] + static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)
+] + static(settings.STATIC_URL, document_root=settings.STATIC_ROOT) 
++ static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
