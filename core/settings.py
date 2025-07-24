@@ -177,17 +177,17 @@ STATICFILES_DIRS = [
     # os.path.join(BASE_DIR, 'staticfiles/'),  # Например, директория для пользовательской статики
 ]
 
-STATIC_URL = '/static/'
+# STATIC_URL = '/static/'
 
-STATIC_ROOT = os.path.join(BASE_DIR, 'static', 'static_prod')
+# STATIC_ROOT = os.path.join(BASE_DIR, 'static', 'static_prod')
 
-STATICFILES_DIRS = (
-    os.path.join(BASE_DIR, 'static', 'static_dev'),
-)
+# STATICFILES_DIRS = (
+#     os.path.join(BASE_DIR, 'static', 'static_dev'),
+# )
 
-MEDIA_URL = '/media/'
+# MEDIA_URL = '/media/'
 
-MEDIA_ROOT = os.path.join(BASE_DIR, 'static', 'media')
+# MEDIA_ROOT = os.path.join(BASE_DIR, 'static', 'media')
 
 # Default primary key field type
 # https://docs.djangoproject.com/en/4.2/ref/settings/#default-auto-field
